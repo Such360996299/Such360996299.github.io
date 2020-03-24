@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/kobe.jpg">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '7.5.0',
+    exturl: false,
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":null},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":true},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="实现新版Nexo 4.0.0+Next 7.5.0的近期文章功能。">
+<meta name="keywords" content="Hexo,Next,Web">
+<meta property="og:type" content="article">
+<meta property="og:title" content="博客近期文章功能">
+<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2019&#x2F;11&#x2F;09&#x2F;%E5%8D%9A%E5%AE%A2%E8%BF%91%E6%9C%9F%E6%96%87%E7%AB%A0%E5%8A%9F%E8%83%BD&#x2F;index.html">
+<meta property="og:site_name" content="Govin">
+<meta property="og:description" content="实现新版Nexo 4.0.0+Next 7.5.0的近期文章功能。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2019&#x2F;11&#x2F;09&#x2F;%E5%8D%9A%E5%AE%A2%E8%BF%91%E6%9C%9F%E6%96%87%E7%AB%A0%E5%8A%9F%E8%83%BD&#x2F;1.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2019&#x2F;11&#x2F;09&#x2F;%E5%8D%9A%E5%AE%A2%E8%BF%91%E6%9C%9F%E6%96%87%E7%AB%A0%E5%8A%9F%E8%83%BD&#x2F;2.png">
+<meta property="og:updated_time" content="2019-11-09T03:38:14.070Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2019&#x2F;11&#x2F;09&#x2F;%E5%8D%9A%E5%AE%A2%E8%BF%91%E6%9C%9F%E6%96%87%E7%AB%A0%E5%8A%9F%E8%83%BD&#x2F;1.png">
+
+<link rel="canonical" href="http://yoursite.com/2019/11/09/%E5%8D%9A%E5%AE%A2%E8%BF%91%E6%9C%9F%E6%96%87%E7%AB%A0%E5%8A%9F%E8%83%BD/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>博客近期文章功能 | Govin</title>
+  
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?234e46e9160b926a84c9326aa16f9da3";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+
+  <script src="https://lib.baomitu.com/jquery/2.2.4/jquery.min.js"></script>
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Govin</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">Welcome to my blog</p>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-hot">
+
+    <a href="/hot/" rel="section"><i class="fa fa-fw fa-signal"></i>热度排行</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="none"
+           placeholder="搜索..." spellcheck="false"
+           type="text" id="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/11/09/%E5%8D%9A%E5%AE%A2%E8%BF%91%E6%9C%9F%E6%96%87%E7%AB%A0%E5%8A%9F%E8%83%BD/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpg">
+      <meta itemprop="name" content="Govin">
+      <meta itemprop="description" content="“坚持”是一件幸福的事">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Govin">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          博客近期文章功能
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              
+                <i class="fa fa-thumb-tack"></i>
+                <font color=7D26CD>置顶</font>
+                <span class="post-meta-divider">|</span>
+              
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2019-11-09 08:48:01 / 修改时间：11:38:14" itemprop="dateCreated datePublished" datetime="2019-11-09T08:48:01+08:00">2019-11-09</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index">
+                    <span itemprop="name">博客</span>
+                  </a>
+                </span>
+            </span>
+
+          
+            <span id="/2019/11/09/%E5%8D%9A%E5%AE%A2%E8%BF%91%E6%9C%9F%E6%96%87%E7%AB%A0%E5%8A%9F%E8%83%BD/" class="post-meta-item leancloud_visitors" data-flag-title="博客近期文章功能" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">评论数量：</span>
+    
+    <a title="valine" href="/2019/11/09/%E5%8D%9A%E5%AE%A2%E8%BF%91%E6%9C%9F%E6%96%87%E7%AB%A0%E5%8A%9F%E8%83%BD/#comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2019/11/09/%E5%8D%9A%E5%AE%A2%E8%BF%91%E6%9C%9F%E6%96%87%E7%AB%A0%E5%8A%9F%E8%83%BD/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>5.3k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>9 分钟</span>
+            </span>
+            <div class="post-description">实现新版Nexo 4.0.0+Next 7.5.0的近期文章功能。</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="版本信息："><a href="#版本信息：" class="headerlink" title="版本信息："></a>版本信息：</h2><p>Nexo：4.0.0<br>Next：7.5.0</p><h2 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h2><h3 id="初步方法"><a href="#初步方法" class="headerlink" title="初步方法"></a>初步方法</h3><p>一开始想实现这个功能时，是参考网上的写法来写的：</p><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">     &lt;!--近期文章版块 began--&gt;</span><br><span class="line">                         &#123;% <span class="keyword">if</span> theme.recent_posts %&#125;</span><br><span class="line">                                 &lt;div <span class="class"><span class="keyword">class</span></span>=<span class="string">"links-of-blogroll motion-element &#123;&#123; "</span>links-<span class="keyword">of</span>-blogroll-<span class="string">" + theme.recent_posts_layout  &#125;&#125;"</span>&gt;</span><br><span class="line">                                     &lt;div <span class="class"><span class="keyword">class</span></span>=<span class="string">"links-of-blogroll-title"</span>&gt;</span><br><span class="line">                                         &lt;i <span class="class"><span class="keyword">class</span></span>=<span class="string">"fa fa-history fa-&#123;&#123; theme.recent_posts_icon | lower &#125;&#125;"</span> aria-hidden=<span class="string">"true"</span>&gt;<span class="xml"><span class="tag">&lt;/<span class="name">i</span>&gt;</span></span></span><br><span class="line">                                         &#123;&#123; theme.recent_posts_title &#125;&#125;</span><br><span class="line">                                     &lt;<span class="regexp">/div&gt;</span></span><br><span class="line"><span class="regexp">                                     &lt;ul class="links-of-blogroll-list"&gt;</span></span><br><span class="line"><span class="regexp">                                         &#123;% set posts = site.posts.sort('-date') %&#125;</span></span><br><span class="line"><span class="regexp">                                        &#123;% for post in posts.slice('0', '5') %&#125;</span></span><br><span class="line"><span class="regexp">                                            &lt;li class='my-links-of-blogroll-li'&gt;</span></span><br><span class="line"><span class="regexp">                                                &lt;a href="&#123;&#123; url_for(post.path) &#125;&#125;" title="&#123;&#123; post.title &#125;&#125;" target="_blank"&gt;&#123;&#123; post.title &#125;&#125;&lt;/</span>a&gt;</span><br><span class="line">                                            &lt;<span class="regexp">/li&gt;</span></span><br><span class="line"><span class="regexp">                                        &#123;% endfor %&#125;</span></span><br><span class="line"><span class="regexp">                                    &lt;/u</span>l&gt;</span><br><span class="line">                                &lt;<span class="regexp">/div&gt;</span></span><br><span class="line"><span class="regexp">                        &#123;% endif %&#125;</span></span><br><span class="line"><span class="regexp">                        &lt;!--近期文章版块 end--&gt;</span></span><br></pre></td></tr></table></figure><a id="more"></a>
+
+
+<p>插入到sidebar.swig中。</p>
+<h3 id="主题配置文件中加入："><a href="#主题配置文件中加入：" class="headerlink" title="主题配置文件中加入："></a>主题配置文件中加入：</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">     #近期文章</span><br><span class="line">     recent_posts_title: 近期文章</span><br><span class="line">     recent_posts_layout: block</span><br><span class="line">     recent_posts: <span class="literal">true</span></span><br><span class="line"><span class="string">`</span></span><br></pre></td></tr></table></figure>
+<h3 id="效果"><a href="#效果" class="headerlink" title="效果"></a>效果</h3><p>查看效果发现网页未能获取到文章的path与title。<br><img src="/2019/11/09/%E5%8D%9A%E5%AE%A2%E8%BF%91%E6%9C%9F%E6%96%87%E7%AB%A0%E5%8A%9F%E8%83%BD/1.png" alt="1"></p>
+<h2 id="开始调试："><a href="#开始调试：" class="headerlink" title="开始调试："></a>开始调试：</h2><h3 id="检查函数方法："><a href="#检查函数方法：" class="headerlink" title="检查函数方法："></a>检查函数方法：</h3><p>检查sort与slice是否有问题，用排除法：<br>添加多个文章，发现能截取5个文章，说明slice正常。<br>去除sort方法，不执行排序，然后查看网页效果，发现仍未能获取到，说明问题不在sort方法上。</p>
+<p>还尝试了换不同方法的写法来排序：sort(‘date’,-1)等，出现报错等。</p>
+<h3 id="检查变量："><a href="#检查变量：" class="headerlink" title="检查变量："></a>检查变量：</h3><p>查看Nexo官方文档，发现site.posts是获取整个网页的文章，site是网页变量，posts是全部文章的属性。<br>尝试单独输出site或site.posts，发现这是一个封装好的object，无法查看其中的内容。</p>
+<h3 id="检查版本问题："><a href="#检查版本问题：" class="headerlink" title="检查版本问题："></a>检查版本问题：</h3><p>之前安装Hexo我是按照网上一个教程：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install -g hexo</span><br></pre></td></tr></table></figure>
+
+<p>但查看Hexo官方文档的安装方法，却是这样的：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install -g hexo-cli</span><br></pre></td></tr></table></figure>
+
+<p>不同安装方法，最后安装的Next的主题默认版本都不同，<br>教程：Next 7.5.0<br>官方：Next 5.1.4</p>
+<p>发现使用Next 5.1.4插入上述代码，成功实现近期文章效果，成功获取。<br>而且发现5.1.4的文件与7.5.0有一定的区别。<br>一开始我的解决办法是想干脆将博客转到Next 5.1.4算了，但发现旧版主题网页的显示效果没有新版的好，而且迁移过程耗费精力，就放弃了。</p>
+<h2 id="新的解决办法"><a href="#新的解决办法" class="headerlink" title="新的解决办法"></a>新的解决办法</h2><h3 id="查看官方文档"><a href="#查看官方文档" class="headerlink" title="查看官方文档"></a>查看官方文档</h3><p>开始查看Next的github官网文档，发现7.5.0更换了模板引擎，使用了Nunjucks作为模板引擎。<br>提出issue，官方人员提示我尝试使用toArray()来解决。</p>
+<h3 id="修改"><a href="#修改" class="headerlink" title="修改"></a>修改</h3><p>在修改为：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">site.posts.toArray()</span><br></pre></td></tr></table></figure>
+<p>执行出现报错，然后去除sort和slice，再次执行，成功实现。</p>
+<p>然后再依次加上slice和sort，发现当使用sort方法时出现报错。</p>
+<p>考虑到要同时兼顾Nunjucks的写法来使用，查看文档：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sort(arr, reverse, caseSens, attr)</span><br></pre></td></tr></table></figure>
+<p>用JavaScript中的arr.sort函数排序arr。如果reverse为true，则会返回相反的 排序结果。默认状态下排序不会区分大小写，但你可以将caseSens设置为true来让排序 区分大小写。我们可以用attr来指定要比较的属性。</p>
+<h3 id="不同sort写法"><a href="#不同sort写法" class="headerlink" title="不同sort写法"></a>不同sort写法</h3><p>然后尝试了不同的写法：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">site.posts.toArray().sort(<span class="string">'-date'</span>)</span><br></pre></td></tr></table></figure>
+
+<p>或：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">site.posts.toArray().sort(<span class="function"><span class="keyword">function</span>(<span class="params">a,b</span>)</span>&#123;</span><br><span class="line"><span class="keyword">return</span> a.date - b.date</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<p>还有默认的：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">site.posts.sort()</span><br><span class="line"></span><br><span class="line">site.posts.sort(Reverse = True)</span><br></pre></td></tr></table></figure>
+<h3 id="报错"><a href="#报错" class="headerlink" title="报错"></a>报错</h3><p>都出现了类似的报错：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">     （报错代码片段）：</span><br><span class="line">     ERROR Render HTML failed: 404.html</span><br><span class="line">     TypeError: Cannot <span class="built_in">read</span> property <span class="string">'replace'</span> of null</span><br><span class="line">     at Hexo.externalLinkFilter (E:\hexo\node_modules\hexo\lib\plugins\filter\after_render\external_link.js:45:15)</span><br><span class="line">     at Hexo.tryCatcher (E:\hexo\node_modules\bluebird\js\release\util.js:16:23)</span><br><span class="line">     at Hexo. (E:\hexo\node_modules\bluebird\js\release\method.js:15:34)</span><br><span class="line">     at Promise.each.filter (E:\hexo\node_modules\hexo\lib\extend\filter.js:60:50)</span><br><span class="line">     at tryCatcher (E:\hexo\node_modules\bluebird\js\release\util.js:16:23)</span><br><span class="line">     at Object.gotValue (E:\hexo\node_modules\bluebird\js\release\reduce.js:166:18)</span><br><span class="line">    at Object.gotAccum (E:\hexo\node_modules\bluebird\js\release\reduce.js:155:25)</span><br><span class="line">    at Object.tryCatcher (E:\hexo\node_modules\bluebird\js\release\util.js:16:23)</span><br><span class="line">    at Promise._settlePromiseFromHandler (E:\hexo\node_modules\bluebird\js\release\promise.js:547:31)</span><br><span class="line">    at Promise._settlePromise (E:\hexo\node_modules\bluebird\js\release\promise.js:604:18)</span><br><span class="line">    at Promise._settlePromiseCtx (E:\hexo\node_modules\bluebird\js\release\promise.js:641:10)</span><br><span class="line">    at _drainQueueStep (E:\hexo\node_modules\bluebird\js\release\async.js:97:12)</span><br><span class="line">    at _drainQueue (E:\hexo\node_modules\bluebird\js\release\async.js:86:9)</span><br><span class="line">    at Async._drainQueues (E:\hexo\node_modules\bluebird\js\release\async.js:102:5)</span><br><span class="line">    at Immediate.Async.drainQueues [as _onImmediate] (E:\hexo\node_modules\bluebird\js\release\async.js:15:14)</span><br><span class="line">    at runCallback (timers.js:705:18)</span><br><span class="line">    at tryOnImmediate (timers.js:676:5)</span><br><span class="line">    at processImmediate (timers.js:658:5)</span><br><span class="line">    ERROR Render HTML failed: categories/index.html</span><br><span class="line">    TypeError: Cannot <span class="built_in">read</span> property <span class="string">'replace'</span> of null</span><br><span class="line">    at Hexo.externalLinkFilter (E:\hexo\node_modules\hexo\lib\plugins\filter\after_render\external_link.js:45:15)</span><br><span class="line">    at Hexo.tryCatcher (E:\hexo\node_modules\bluebird\js\release\util.js:16:23)</span><br><span class="line">    at Hexo. (E:\hexo\node_modules\bluebird\js\release\method.js:15:34)</span><br><span class="line">    at Promise.each.filter (E:\hexo\node_modules\hexo\lib\extend\filter.js:60:50)</span><br><span class="line">    at tryCatcher (E:\hexo\node_modules\bluebird\js\release\util.js:16:23)</span><br><span class="line">    at Object.gotValue (E:\hexo\node_modules\bluebird\js\release\reduce.js:166:18)</span><br><span class="line">    at Object.gotAccum (E:\hexo\node_modules\bluebird\js\release\reduce.js:155:25)</span><br></pre></td></tr></table></figure>
+
+<h2 id="思考"><a href="#思考" class="headerlink" title="思考"></a>思考</h2><p>经静下心来思考，想到既然：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">site.posts.sort(<span class="string">'-date'</span>)</span><br></pre></td></tr></table></figure>
+<p>这样不报错，而：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">site.posts.toArray().sort(<span class="string">'-date'</span>)</span><br></pre></td></tr></table></figure>
+<p>转换为数组后再排序就报错。</p>
+<p>为何不试下：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">site.posts.sort(<span class="string">'-date'</span>).toArray()</span><br></pre></td></tr></table></figure>
+<p>先排序好再转换为数组？</p>
+<h3 id="成功实现"><a href="#成功实现" class="headerlink" title="成功实现"></a>成功实现</h3><p>修改过后重新部署，成功实现！</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">&lt;!--近期文章版块 began--&gt;</span><br><span class="line">&#123;% <span class="keyword">if</span> theme.recent_posts %&#125;</span><br><span class="line">	&lt;div <span class="class"><span class="keyword">class</span></span>=<span class="string">"links-of-blogroll motion-element &#123;&#123; "</span>links-<span class="keyword">of</span>-blogroll-<span class="string">" + theme.recent_posts_layout  &#125;&#125;"</span>&gt;</span><br><span class="line">                &lt;div <span class="class"><span class="keyword">class</span></span>=<span class="string">"links-of-blogroll-title"</span>&gt;</span><br><span class="line">                  &lt;i <span class="class"><span class="keyword">class</span></span>=<span class="string">"fa fa-history fa-&#123;&#123; theme.recent_posts_icon | lower &#125;&#125;"</span> aria-hidden=<span class="string">"true"</span>&gt;<span class="xml"><span class="tag">&lt;/<span class="name">i</span>&gt;</span></span></span><br><span class="line">                  &#123;&#123; theme.recent_posts_title &#125;&#125;</span><br><span class="line">                &lt;<span class="regexp">/div&gt;</span></span><br><span class="line"><span class="regexp">		&lt;ul class="links-of-blogroll-list"&gt;</span></span><br><span class="line"><span class="regexp">			&#123;% set posts = site.posts.sort('-date').toArray() %&#125;</span></span><br><span class="line"><span class="regexp">        	&#123;% for post in posts.slice(0,5) %&#125;</span></span><br><span class="line"><span class="regexp">            	&lt;li class='my-links-of-blogroll-li'&gt;</span></span><br><span class="line"><span class="regexp">            	&lt;a href="&#123;&#123; url_for(post.path) &#125;&#125;" title= "&#123;&#123; post.title &#125;&#125;" target="_blank"&gt;&#123;&#123; post.title &#125;&#125;&lt;/</span>a&gt;</span><br><span class="line">            	&lt;<span class="regexp">/li&gt;</span></span><br><span class="line"><span class="regexp">        &#123;% endfor %&#125;                  </span></span><br><span class="line"><span class="regexp">    	&lt;/u</span>l&gt;</span><br><span class="line">     &lt;<span class="regexp">/div&gt;</span></span><br><span class="line"><span class="regexp">&#123;% endif %&#125;</span></span><br><span class="line"><span class="regexp">&lt;!--近期文章版块 end--&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="/2019/11/09/%E5%8D%9A%E5%AE%A2%E8%BF%91%E6%9C%9F%E6%96%87%E7%AB%A0%E5%8A%9F%E8%83%BD/2.png" alt="2"></p>
+<p>成功实现新版Next主题的近期文章功能。<br>这其中的修改要兼顾Nexo和Next主题模板引擎Nunjucks！</p>
+
+    </div>
+
+    
+    
+    
+      
+  <div class="popular-posts-header">相关文章</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2019\11\03\hexo-blog\" rel="bookmark">Hexo一些功能的实现</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2019\11\03\my-first-blog\" rel="bookmark">搭建Github+Hexo的Blog</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2019\11\07\部署Python Web App\" rel="bookmark">部署Python Web App</a></div>
+    </li>
+  </ul>
+
+      
+        <div class="reward-container">
+  <div></div>
+  <button disable="enable" onclick="var qr = document.getElementById(&quot;qr&quot;); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechatpay.png" alt="Govin 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay.png" alt="Govin 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Hexo/" rel="tag"># Hexo</a>
+              <a href="/tags/Next/" rel="tag"># Next</a>
+              <a href="/tags/Web/" rel="tag"># Web</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+                <a href="/2019/11/07/%E9%83%A8%E7%BD%B2Python%20Web%20App/" rel="next" title="部署Python Web App">
+                  <i class="fa fa-chevron-left"></i> 部署Python Web App
+                </a>
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+                <a href="/2019/11/09/%E9%98%BF%E9%87%8C%E4%BA%91%E6%9C%8D%E5%8A%A1%E5%99%A8%E9%83%A8%E7%BD%B2/" rel="prev" title="阿里云服务器部署">
+                  阿里云服务器部署 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    <div class="comments" id="comments"></div>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#版本信息："><span class="nav-number">1.</span> <span class="nav-text">版本信息：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#实现"><span class="nav-number">2.</span> <span class="nav-text">实现</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#初步方法"><span class="nav-number">2.1.</span> <span class="nav-text">初步方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#主题配置文件中加入："><span class="nav-number">2.2.</span> <span class="nav-text">主题配置文件中加入：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#效果"><span class="nav-number">2.3.</span> <span class="nav-text">效果</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#开始调试："><span class="nav-number">3.</span> <span class="nav-text">开始调试：</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#检查函数方法："><span class="nav-number">3.1.</span> <span class="nav-text">检查函数方法：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#检查变量："><span class="nav-number">3.2.</span> <span class="nav-text">检查变量：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#检查版本问题："><span class="nav-number">3.3.</span> <span class="nav-text">检查版本问题：</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#新的解决办法"><span class="nav-number">4.</span> <span class="nav-text">新的解决办法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#查看官方文档"><span class="nav-number">4.1.</span> <span class="nav-text">查看官方文档</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#修改"><span class="nav-number">4.2.</span> <span class="nav-text">修改</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#不同sort写法"><span class="nav-number">4.3.</span> <span class="nav-text">不同sort写法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#报错"><span class="nav-number">4.4.</span> <span class="nav-text">报错</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#思考"><span class="nav-number">5.</span> <span class="nav-text">思考</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#成功实现"><span class="nav-number">5.1.</span> <span class="nav-text">成功实现</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <img class="site-author-image" itemprop="image" alt="Govin"
+    src="/images/header.jpg">
+  <p class="site-author-name" itemprop="name">Govin</p>
+  <div class="site-description" itemprop="description">“坚持”是一件幸福的事</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">5</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="mailto:360996299@qq.com" title="E-Mail" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+      <!--近期文章版块 began-->
+          
+              <div class="links-of-blogroll motion-element links-of-blogroll-block">
+                <div class="links-of-blogroll-title">
+                  <i class="fa fa-history fa-" aria-hidden="true"></i>
+                  近期文章
+                </div>
+                <ul class="links-of-blogroll-list">
+                  
+                  
+                    <li class='my-links-of-blogroll-li'>
+                      <a href="/2019/11/09/%E9%98%BF%E9%87%8C%E4%BA%91%E6%9C%8D%E5%8A%A1%E5%99%A8%E9%83%A8%E7%BD%B2/" title= "阿里云服务器部署" target="_blank">阿里云服务器部署</a>
+                    </li>
+                  
+                    <li class='my-links-of-blogroll-li'>
+                      <a href="/2019/11/09/%E5%8D%9A%E5%AE%A2%E8%BF%91%E6%9C%9F%E6%96%87%E7%AB%A0%E5%8A%9F%E8%83%BD/" title= "博客近期文章功能" target="_blank">博客近期文章功能</a>
+                    </li>
+                  
+                    <li class='my-links-of-blogroll-li'>
+                      <a href="/2019/11/07/%E9%83%A8%E7%BD%B2Python%20Web%20App/" title= "部署Python Web App" target="_blank">部署Python Web App</a>
+                    </li>
+                  
+                    <li class='my-links-of-blogroll-li'>
+                      <a href="/2019/11/03/hexo-blog/" title= "Hexo一些功能的实现" target="_blank">Hexo一些功能的实现</a>
+                    </li>
+                  
+                    <li class='my-links-of-blogroll-li'>
+                      <a href="/2019/11/03/my-first-blog/" title= "搭建Github+Hexo的Blog" target="_blank">搭建Github+Hexo的Blog</a>
+                    </li>
+                                    
+                </ul>
+              </div>
+          
+          <!--近期文章版块 end-->
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Govin</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">19k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">32 分钟</span>
+</div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/pisces.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+  var GUEST = ['nick', 'mail', 'link'];
+  var guest = 'nick,mail,link';
+  guest = guest.split(',').filter(item => {
+    return GUEST.includes(item);
+  });
+  new Valine({
+    el: '#comments',
+    verify: false,
+    notify: false,
+    appId: 'gSJCta1oDVK7aIDL4mJtvxb1-gzGzoHsz',
+    appKey: 'ajBiMTg38GsxlSkCdwP2jowR',
+    placeholder: "说点什么吧~ ^_^",
+    avatar: 'mm',
+    meta: guest,
+    pageSize: '10' || 10,
+    visitor: true,
+    lang: '' || 'zh-cn',
+    path: location.pathname,
+    recordIP: false,
+    serverURLs: ''
+  });
+}, window.Valine);
+</script>
+
+
+  <!-- badApplePlayer -->
+
+  <!-- Your XlchPlayerKey -->
+  <script>XlchKey="Such";</script>
+  <!-- font-awesome 4.2.0 -->
+  <link href="https://lib.baomitu.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+  <!-- JQuery-mousewheel 3.1.9 -->
+  <script src="https://lib.baomitu.com/jquery-mousewheel/3.1.9/jquery.mousewheel.min.js"></script>
+  <!-- Scrollbar -->
+  <script src="https://static.https.badapple.top/BadApplePlayer/js/scrollbar.js"></script>
+  <!-- BadApplePlayer -->
+  <script src="https://static.https.badapple.top/BadApplePlayer/Player.js"></script>
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","model":{"jsonPath":"/live2dw/assets/hijiki.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":false},"log":false,"tagMode":false});</script></body>
+</html>

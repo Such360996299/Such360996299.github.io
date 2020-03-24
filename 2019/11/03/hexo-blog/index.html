@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/kobe.jpg">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '7.5.0',
+    exturl: false,
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":null},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":true},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="网易云音乐播放插件，Valine样式的修改。">
+<meta name="keywords" content="Hexo">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hexo一些功能的实现">
+<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2019&#x2F;11&#x2F;03&#x2F;hexo-blog&#x2F;index.html">
+<meta property="og:site_name" content="Govin">
+<meta property="og:description" content="网易云音乐播放插件，Valine样式的修改。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2019&#x2F;11&#x2F;03&#x2F;hexo-blog&#x2F;valine.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2019&#x2F;11&#x2F;03&#x2F;hexo-blog&#x2F;1.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2019&#x2F;11&#x2F;03&#x2F;hexo-blog&#x2F;2.png">
+<meta property="og:updated_time" content="2019-11-09T03:20:31.296Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2019&#x2F;11&#x2F;03&#x2F;hexo-blog&#x2F;valine.png">
+
+<link rel="canonical" href="http://yoursite.com/2019/11/03/hexo-blog/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>Hexo一些功能的实现 | Govin</title>
+  
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?234e46e9160b926a84c9326aa16f9da3";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+
+  <script src="https://lib.baomitu.com/jquery/2.2.4/jquery.min.js"></script>
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Govin</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">Welcome to my blog</p>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-hot">
+
+    <a href="/hot/" rel="section"><i class="fa fa-fw fa-signal"></i>热度排行</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="none"
+           placeholder="搜索..." spellcheck="false"
+           type="text" id="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/11/03/hexo-blog/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpg">
+      <meta itemprop="name" content="Govin">
+      <meta itemprop="description" content="“坚持”是一件幸福的事">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Govin">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Hexo一些功能的实现
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-11-03 11:31:34" itemprop="dateCreated datePublished" datetime="2019-11-03T11:31:34+08:00">2019-11-03</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2019-11-09 11:20:31" itemprop="dateModified" datetime="2019-11-09T11:20:31+08:00">2019-11-09</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index">
+                    <span itemprop="name">博客</span>
+                  </a>
+                </span>
+            </span>
+
+          
+            <span id="/2019/11/03/hexo-blog/" class="post-meta-item leancloud_visitors" data-flag-title="Hexo一些功能的实现" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">评论数量：</span>
+    
+    <a title="valine" href="/2019/11/03/hexo-blog/#comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2019/11/03/hexo-blog/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>3.4k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>6 分钟</span>
+            </span>
+            <div class="post-description">网易云音乐播放插件，Valine样式的修改。</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>主要是列举了解决这两个比较难搞的功能。</p>
+<h2 id="网易云音乐："><a href="#网易云音乐：" class="headerlink" title="网易云音乐："></a>网易云音乐：</h2><h3 id="安装："><a href="#安装：" class="headerlink" title="安装："></a>安装：</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install aplayer --save</span><br></pre></td></tr></table></figure>
+
+<h3 id="实现播放列表"><a href="#实现播放列表" class="headerlink" title="实现播放列表"></a>实现播放列表</h3><p>将E:\hexo\node_modules\aplayer内的dist文件夹复制到E:\hexo\themes\next\source内<br>并在该文件夹内新建music.js</p>
+<a id="more"></a>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> ap = <span class="keyword">new</span> APlayer(&#123;</span><br><span class="line">    container: <span class="built_in">document</span>.getElementById(<span class="string">'aplayer'</span>),</span><br><span class="line">    autoplay: <span class="literal">true</span>,</span><br><span class="line">    theme: <span class="string">'#FADFA3'</span>,</span><br><span class="line">    listFolded: <span class="literal">false</span>,</span><br><span class="line">    listMaxHeight: <span class="string">'300px'</span>,</span><br><span class="line">    mutex: <span class="literal">true</span>,</span><br><span class="line">    loop: <span class="string">'all'</span>,</span><br><span class="line">    order: <span class="string">'random'</span>,</span><br><span class="line">    preload: <span class="string">'auto'</span>,</span><br><span class="line">    volume: <span class="number">0.7</span>,</span><br><span class="line">    lrcType: <span class="number">1</span>,</span><br><span class="line">    audio: [</span><br><span class="line">        &#123;</span><br><span class="line">            name: <span class="string">'夜空中最亮的星'</span>,</span><br><span class="line">            artist: <span class="string">'逃跑计划'</span>,</span><br><span class="line">            url: <span class="string">'http://music.163.com/song/media/outer/url?id=25706282.mp3'</span>,</span><br><span class="line">            cover: <span class="string">'http://p1.music.126.net/d541jx7SqoDzVkenhmtg6g==/19193074974743620.jpg'</span>,</span><br><span class="line">            lrc: <span class="string">''</span>,</span><br><span class="line">            theme: <span class="string">'#ebd0c2'</span></span><br><span class="line">        &#125;,</span><br><span class="line">        &#123;</span><br><span class="line">            name: <span class="string">'出卖'</span>,</span><br><span class="line">            artist: <span class="string">'简弘亦'</span>,</span><br><span class="line">            url: <span class="string">'http://music.163.com/song/media/outer/url?id=406086090.mp3'</span>,</span><br><span class="line">            cover: <span class="string">'http://p1.music.126.net/FiZafE2FWKsw3kEcJCsHSw==/1380986606501842.jp'</span>,</span><br><span class="line">            lrc: <span class="string">''</span>,</span><br><span class="line">            theme: <span class="string">'#46718b'</span></span><br><span class="line">        &#125;,</span><br><span class="line">        &#123;</span><br><span class="line">            name: <span class="string">'温柔'</span>,</span><br><span class="line">            artist: <span class="string">'五月天'</span>,</span><br><span class="line">            url: <span class="string">'http://music.163.com/song/media/outer/url?id=386001.mp3'</span>,</span><br><span class="line">            cover: <span class="string">'http://p2.music.126.net/_B1Fn_Z1WxHzqGLzLZDf-w==/109951163263882447.jpg'</span>,</span><br><span class="line">            lrc: <span class="string">''</span>,</span><br><span class="line">            theme: <span class="string">'#FF9933'</span></span><br><span class="line">        &#125;,</span><br><span class="line">        &#123;</span><br><span class="line">            name: <span class="string">'再见再见'</span>,</span><br><span class="line">            artist: <span class="string">'逃跑计划'</span>,</span><br><span class="line">            url: <span class="string">'http://music.163.com/song/media/outer/url?id=25706285.mp3'</span>,</span><br><span class="line">            cover: <span class="string">'http://p1.music.126.net/d541jx7SqoDzVkenhmtg6g==/19193074974743620.jpg'</span>,</span><br><span class="line">            lrc: <span class="string">''</span>,</span><br><span class="line">            theme: <span class="string">'#336666'</span></span><br><span class="line">        &#125;,</span><br><span class="line">         &#123;</span><br><span class="line">            name: <span class="string">'Promise'</span>,</span><br><span class="line">            artist: <span class="string">'山岡晃'</span>,</span><br><span class="line">            url: <span class="string">'http://music.163.com/song/media/outer/url?id=18861490.mp3'</span>,</span><br><span class="line">            cover: <span class="string">'http://p1.music.126.net/QbadLxlMMmb4iStV4JnKLA==/6664139976590904.jpg'</span>,</span><br><span class="line">            theme: <span class="string">'#663300'</span></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    ]</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<h3 id="添加到侧边栏"><a href="#添加到侧边栏" class="headerlink" title="添加到侧边栏"></a>添加到侧边栏</h3><p>sidebar.swing内添加：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;link rel=<span class="string">"stylesheet"</span> href=<span class="string">"/dist/APlayer.min.css"</span>&gt;</span><br><span class="line">      &lt;div id=<span class="string">"aplayer"</span>&gt;<span class="xml"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line">      &lt;script type=<span class="string">"text/javascript"</span> src=<span class="string">"/dist/APlayer.min.js"</span>&gt;<span class="xml"><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span></span><br><span class="line">      &lt;script type=<span class="string">"text/javascript"</span> src=<span class="string">"/dist/music.js"</span>&gt;<span class="xml"><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span></span><br></pre></td></tr></table></figure>
+
+<h3 id="添加到其它位置"><a href="#添加到其它位置" class="headerlink" title="添加到其它位置"></a>添加到其它位置</h3><p>上面这段引用也可以添加到文章中实现播放器。</p>
+<h3 id="网易云MP3链接获取"><a href="#网易云MP3链接获取" class="headerlink" title="网易云MP3链接获取"></a>网易云MP3链接获取</h3><p><a href="http://music.163.com/song/media/outer/url?id=.mp3&#39;" target="_blank" rel="noopener">http://music.163.com/song/media/outer/url?id=.mp3&#39;</a><br>添加上对应歌曲的id即可。</p>
+<h3 id="网易云lrc歌词链接获取"><a href="#网易云lrc歌词链接获取" class="headerlink" title="网易云lrc歌词链接获取"></a>网易云lrc歌词链接获取</h3><p><a href="http://music.163.com/api/song/media?id=" target="_blank" rel="noopener">http://music.163.com/api/song/media?id=</a><br>添加上对应歌曲id即可。然后复制lyric的值，不用去除\n。</p>
+<h2 id="Valine样式修改"><a href="#Valine样式修改" class="headerlink" title="Valine样式修改"></a>Valine样式修改</h2><h3 id="修改评论数量的样式："><a href="#修改评论数量的样式：" class="headerlink" title="修改评论数量的样式："></a>修改评论数量的样式：</h3><p><img src="/2019/11/03/hexo-blog/valine.png" alt="valine"></p>
+<p>目的：改成中文，“评论数量”</p>
+<p>一开始在Next主题目录下的layout_macro\post.swing寻找该样式发现<br><img src="/2019/11/03/hexo-blog/1.png" alt="1"></p>
+<p>图片中除了想找的都在这个post.swing文件实现了，就是没有这个valine！<br>本地没有，网页部署后就有这个样式？<br><img src="/2019/11/03/hexo-blog/2.png" alt="2"></p>
+<p>一番苦苦寻找后，发现它是用js动态生成的，位于next\scripts\filters\comment\valine.js文件夹内：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">     injects.postMeta.raw(<span class="string">'valine'</span>, <span class="string">`</span></span><br><span class="line"><span class="string">       &#123;% if post.comments and (is_post() or theme.valine.comment_count) %&#125;</span></span><br><span class="line"><span class="string">       &lt;span class="post-meta-item"&gt;</span></span><br><span class="line"><span class="string">         <span class="subst">$&#123;iconText(<span class="string">'comment-o'</span>, <span class="string">'valine'</span>)&#125;</span></span></span><br><span class="line"><span class="string">         &lt;a title="valine" href="&#123;&#123; url_for(post.path) &#125;&#125;#comments" itemprop="discussionUrl"&gt;</span></span><br><span class="line"><span class="string">           &lt;span class="post-comments-count valine-comment-count" data-xid="&#123;&#123; url_for(post.path) &#125;&#125;" itemprop="commentCount"&gt;&lt;/span&gt;</span></span><br><span class="line"><span class="string">         &lt;/a&gt;</span></span><br><span class="line"><span class="string">       &lt;/span&gt;</span></span><br><span class="line"><span class="string">       &#123;% endif %&#125;</span></span><br><span class="line"><span class="string">      `</span>, &#123;&#125;, &#123;&#125;, theme.valine.post_meta_order);</span><br></pre></td></tr></table></figure>
+
+<p>再到同一文件夹下的common.js文件查看这个iconText方法：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">     iconText(icon, key, defaultValue) &#123;</span><br><span class="line">             <span class="keyword">if</span> (!defaultValue) &#123;</span><br><span class="line">                 defaultValue = capitalize(key);</span><br><span class="line">             &#125;</span><br><span class="line">             <span class="keyword">return</span> <span class="string">`</span></span><br><span class="line"><span class="string">           &lt;span class="post-meta-item-icon"&gt;</span></span><br><span class="line"><span class="string">             &lt;i class="fa fa-<span class="subst">$&#123;icon&#125;</span>"&gt;&lt;/i&gt;</span></span><br><span class="line"><span class="string">           &lt;/span&gt;</span></span><br><span class="line"><span class="string">           &#123;%- set post_meta_comment = __('post.comments.<span class="subst">$&#123;key&#125;</span>') %&#125;</span></span><br><span class="line"><span class="string">          &#123;%- if post_meta_comment == 'post.comments.<span class="subst">$&#123;key&#125;</span>' %&#125;</span></span><br><span class="line"><span class="string">            &#123;%- set post_meta_comment = '<span class="subst">$&#123;defaultValue&#125;</span>' %&#125;</span></span><br><span class="line"><span class="string">          &#123;%- endif %&#125;</span></span><br><span class="line"><span class="string">          &lt;span class="post-meta-item-text"&gt;&#123;&#123; post_meta_comment + __('symbol.colon') &#125;&#125;&lt;/span&gt;</span></span><br><span class="line"><span class="string">        `</span>;</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure>
+
+<p>原来只要修改key这个值即可实现！</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$&#123;iconText(<span class="string">'comment-o'</span>, <span class="string">'评论数量'</span>)&#125;</span><br></pre></td></tr></table></figure>
+<p>完成。</p>
+<h3 id="网站无效果"><a href="#网站无效果" class="headerlink" title="网站无效果"></a>网站无效果</h3><p>一套hexo clean+hexo g+hexo d下来，github page并没有实现更新一部分功能，可以把public文件夹删除，再次执行上述步骤！</p>
+
+    </div>
+
+    
+    
+    
+      
+  <div class="popular-posts-header">相关文章</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2019\11\09\博客近期文章功能\" rel="bookmark">博客近期文章功能</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2019\11\03\my-first-blog\" rel="bookmark">搭建Github+Hexo的Blog</a></div>
+    </li>
+  </ul>
+
+      
+        <div class="reward-container">
+  <div></div>
+  <button disable="enable" onclick="var qr = document.getElementById(&quot;qr&quot;); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechatpay.png" alt="Govin 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay.png" alt="Govin 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Hexo/" rel="tag"># Hexo</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+                <a href="/2019/11/03/my-first-blog/" rel="next" title="搭建Github+Hexo的Blog">
+                  <i class="fa fa-chevron-left"></i> 搭建Github+Hexo的Blog
+                </a>
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+                <a href="/2019/11/07/%E9%83%A8%E7%BD%B2Python%20Web%20App/" rel="prev" title="部署Python Web App">
+                  部署Python Web App <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    <div class="comments" id="comments"></div>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#网易云音乐："><span class="nav-number">1.</span> <span class="nav-text">网易云音乐：</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#安装："><span class="nav-number">1.1.</span> <span class="nav-text">安装：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#实现播放列表"><span class="nav-number">1.2.</span> <span class="nav-text">实现播放列表</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#添加到侧边栏"><span class="nav-number">1.3.</span> <span class="nav-text">添加到侧边栏</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#添加到其它位置"><span class="nav-number">1.4.</span> <span class="nav-text">添加到其它位置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#网易云MP3链接获取"><span class="nav-number">1.5.</span> <span class="nav-text">网易云MP3链接获取</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#网易云lrc歌词链接获取"><span class="nav-number">1.6.</span> <span class="nav-text">网易云lrc歌词链接获取</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Valine样式修改"><span class="nav-number">2.</span> <span class="nav-text">Valine样式修改</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#修改评论数量的样式："><span class="nav-number">2.1.</span> <span class="nav-text">修改评论数量的样式：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#网站无效果"><span class="nav-number">2.2.</span> <span class="nav-text">网站无效果</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <img class="site-author-image" itemprop="image" alt="Govin"
+    src="/images/header.jpg">
+  <p class="site-author-name" itemprop="name">Govin</p>
+  <div class="site-description" itemprop="description">“坚持”是一件幸福的事</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">5</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="mailto:360996299@qq.com" title="E-Mail" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+      <!--近期文章版块 began-->
+          
+              <div class="links-of-blogroll motion-element links-of-blogroll-block">
+                <div class="links-of-blogroll-title">
+                  <i class="fa fa-history fa-" aria-hidden="true"></i>
+                  近期文章
+                </div>
+                <ul class="links-of-blogroll-list">
+                  
+                  
+                    <li class='my-links-of-blogroll-li'>
+                      <a href="/2019/11/09/%E9%98%BF%E9%87%8C%E4%BA%91%E6%9C%8D%E5%8A%A1%E5%99%A8%E9%83%A8%E7%BD%B2/" title= "阿里云服务器部署" target="_blank">阿里云服务器部署</a>
+                    </li>
+                  
+                    <li class='my-links-of-blogroll-li'>
+                      <a href="/2019/11/09/%E5%8D%9A%E5%AE%A2%E8%BF%91%E6%9C%9F%E6%96%87%E7%AB%A0%E5%8A%9F%E8%83%BD/" title= "博客近期文章功能" target="_blank">博客近期文章功能</a>
+                    </li>
+                  
+                    <li class='my-links-of-blogroll-li'>
+                      <a href="/2019/11/07/%E9%83%A8%E7%BD%B2Python%20Web%20App/" title= "部署Python Web App" target="_blank">部署Python Web App</a>
+                    </li>
+                  
+                    <li class='my-links-of-blogroll-li'>
+                      <a href="/2019/11/03/hexo-blog/" title= "Hexo一些功能的实现" target="_blank">Hexo一些功能的实现</a>
+                    </li>
+                  
+                    <li class='my-links-of-blogroll-li'>
+                      <a href="/2019/11/03/my-first-blog/" title= "搭建Github+Hexo的Blog" target="_blank">搭建Github+Hexo的Blog</a>
+                    </li>
+                                    
+                </ul>
+              </div>
+          
+          <!--近期文章版块 end-->
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Govin</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">19k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">32 分钟</span>
+</div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/pisces.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+  var GUEST = ['nick', 'mail', 'link'];
+  var guest = 'nick,mail,link';
+  guest = guest.split(',').filter(item => {
+    return GUEST.includes(item);
+  });
+  new Valine({
+    el: '#comments',
+    verify: false,
+    notify: false,
+    appId: 'gSJCta1oDVK7aIDL4mJtvxb1-gzGzoHsz',
+    appKey: 'ajBiMTg38GsxlSkCdwP2jowR',
+    placeholder: "说点什么吧~ ^_^",
+    avatar: 'mm',
+    meta: guest,
+    pageSize: '10' || 10,
+    visitor: true,
+    lang: '' || 'zh-cn',
+    path: location.pathname,
+    recordIP: false,
+    serverURLs: ''
+  });
+}, window.Valine);
+</script>
+
+
+  <!-- badApplePlayer -->
+
+  <!-- Your XlchPlayerKey -->
+  <script>XlchKey="Such";</script>
+  <!-- font-awesome 4.2.0 -->
+  <link href="https://lib.baomitu.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+  <!-- JQuery-mousewheel 3.1.9 -->
+  <script src="https://lib.baomitu.com/jquery-mousewheel/3.1.9/jquery.mousewheel.min.js"></script>
+  <!-- Scrollbar -->
+  <script src="https://static.https.badapple.top/BadApplePlayer/js/scrollbar.js"></script>
+  <!-- BadApplePlayer -->
+  <script src="https://static.https.badapple.top/BadApplePlayer/Player.js"></script>
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","model":{"jsonPath":"/live2dw/assets/hijiki.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":false},"log":false,"tagMode":false});</script></body>
+</html>

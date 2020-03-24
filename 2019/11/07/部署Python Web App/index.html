@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/kobe.jpg">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '7.5.0',
+    exturl: false,
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":null},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":true},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="基于Linux端(服务器）Ubuntu18.04.3，将Python Web App部署到服务器。">
+<meta name="keywords" content="Windows,Linux,Python,Web">
+<meta property="og:type" content="article">
+<meta property="og:title" content="部署Python Web App">
+<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2019&#x2F;11&#x2F;07&#x2F;%E9%83%A8%E7%BD%B2Python%20Web%20App&#x2F;index.html">
+<meta property="og:site_name" content="Govin">
+<meta property="og:description" content="基于Linux端(服务器）Ubuntu18.04.3，将Python Web App部署到服务器。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-11-09T03:33:08.985Z">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://yoursite.com/2019/11/07/%E9%83%A8%E7%BD%B2Python%20Web%20App/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>部署Python Web App | Govin</title>
+  
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?234e46e9160b926a84c9326aa16f9da3";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+
+  <script src="https://lib.baomitu.com/jquery/2.2.4/jquery.min.js"></script>
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Govin</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">Welcome to my blog</p>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-hot">
+
+    <a href="/hot/" rel="section"><i class="fa fa-fw fa-signal"></i>热度排行</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="none"
+           placeholder="搜索..." spellcheck="false"
+           type="text" id="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/11/07/%E9%83%A8%E7%BD%B2Python%20Web%20App/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpg">
+      <meta itemprop="name" content="Govin">
+      <meta itemprop="description" content="“坚持”是一件幸福的事">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Govin">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          部署Python Web App
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              
+                <i class="fa fa-thumb-tack"></i>
+                <font color=7D26CD>置顶</font>
+                <span class="post-meta-divider">|</span>
+              
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-11-07 08:45:05" itemprop="dateCreated datePublished" datetime="2019-11-07T08:45:05+08:00">2019-11-07</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2019-11-09 11:33:08" itemprop="dateModified" datetime="2019-11-09T11:33:08+08:00">2019-11-09</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Python/" itemprop="url" rel="index">
+                    <span itemprop="name">Python</span>
+                  </a>
+                </span>
+            </span>
+
+          
+            <span id="/2019/11/07/%E9%83%A8%E7%BD%B2Python%20Web%20App/" class="post-meta-item leancloud_visitors" data-flag-title="部署Python Web App" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">评论数量：</span>
+    
+    <a title="valine" href="/2019/11/07/%E9%83%A8%E7%BD%B2Python%20Web%20App/#comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2019/11/07/%E9%83%A8%E7%BD%B2Python%20Web%20App/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>7.6k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>13 分钟</span>
+            </span>
+            <div class="post-description">基于Linux端(服务器）Ubuntu18.04.3，将Python Web App部署到服务器。</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="Linux端-服务器）Ubuntu18-04-3："><a href="#Linux端-服务器）Ubuntu18-04-3：" class="headerlink" title="Linux端(服务器）Ubuntu18.04.3："></a>Linux端(服务器）Ubuntu18.04.3：</h2><h3 id="安装："><a href="#安装：" class="headerlink" title="安装："></a>安装：</h3><p>ssh服务；<br>Nginx （web服务器）；<br>Supervisor（python3）监控服务，管理进程；<br>Mysql；<br>jinjia2；<br>aiomysql；<br>aiohttp；<br>python3；</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ sudo apt-get install nginx supervisor python3 mysql-server</span><br><span class="line"></span><br><span class="line">$ sudo pip3 install jinja2 aiomysql aiohttp</span><br></pre></td></tr></table></figure><a id="more"></a>
+
+
+<h3 id="初始化Mysql数据库："><a href="#初始化Mysql数据库：" class="headerlink" title="初始化Mysql数据库："></a>初始化Mysql数据库：</h3><p>进入mysql命令行，使用source + sql文件路径执行脚本创建表；</p>
+<h3 id="定义目录结构："><a href="#定义目录结构：" class="headerlink" title="定义目录结构："></a>定义目录结构：</h3><p>/<br>+- srv/<br>   +- awesome/       &lt;– Web App根目录<br>      +- www/        &lt;– 存放Python源码<br>      |  +- static/  &lt;– 存放静态资源文件<br>      +- log/        &lt;– 存放log</p>
+<h3 id="使用虚拟环境："><a href="#使用虚拟环境：" class="headerlink" title="使用虚拟环境："></a>使用虚拟环境：</h3><p>安装：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt install virtualenv</span><br></pre></td></tr></table></figure>
+
+<p>创建:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">virtualenv .env --python=python3</span><br></pre></td></tr></table></figure>
+
+<p>激活:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">source</span> .env/bin/activate</span><br></pre></td></tr></table></figure>
+
+<h3 id="安装supervisor"><a href="#安装supervisor" class="headerlink" title="安装supervisor"></a>安装supervisor</h3><p>生成配置文件:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">echo_supervisord_conf &gt; supervisord.conf</span><br></pre></td></tr></table></figure>
+
+<p>配置:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">awesome.conf(位于etc/supervisor/conf.d):</span><br><span class="line"><span class="built_in">command</span> = /home/such/.env/bin/python3 /srv/awesome/www/app.py runserver</span><br></pre></td></tr></table></figure>
+
+<p>注意：supervisor不要添加多个command，如果其中一个command出错，而另一个正常，则整体还是可以运行的！！<br>即：command = 。。。<br>       command =。。。</p>
+<p>编写一个Supervisor的配置文件awesome.conf，存放到/etc/supervisor/conf.d/目录下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">[program:awesome]</span><br><span class="line"><span class="built_in">command</span> = /home/such/.env/bin/python3 /srv/awesome/www/app.py runserver</span><br><span class="line">directory   = /srv/awesome/www</span><br><span class="line">user        = such</span><br><span class="line">startsecs   = 3</span><br><span class="line">redirect_stderr         = <span class="literal">true</span></span><br><span class="line">stdout_logfile_maxbytes = 50MB</span><br><span class="line">stdout_logfile_backups  = 10</span><br><span class="line">stdout_logfile          = /srv/awesome/<span class="built_in">log</span>/app.log</span><br></pre></td></tr></table></figure>
+
+<p>配置文件通过[program:awesome]指定服务名为awesome，command指定启动app.py。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">执行配置更新：</span><br><span class="line"><span class="variable">$sudo</span> supervisorctl reread</span><br><span class="line"><span class="variable">$sudo</span> supervisorctl update</span><br><span class="line"><span class="variable">$sudo</span> supervisorctl reload</span><br><span class="line"><span class="variable">$sudo</span> supervisorctl start awesome</span><br></pre></td></tr></table></figure>
+
+<h3 id="nginx配置："><a href="#nginx配置：" class="headerlink" title="nginx配置："></a>nginx配置：</h3><p>/etc/nginx/sites-available/下有个default文件，添加新配置awesome并不会生效。因此直接修改default文件进行配置。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">server &#123;</span><br><span class="line">    listen      80; <span class="comment"># 监听80端口</span></span><br><span class="line">root       /srv/awesome/www;</span><br><span class="line">    access_log /srv/awesome/<span class="built_in">log</span>/access_log;</span><br><span class="line">    error_log  /srv/awesome/<span class="built_in">log</span>/error_log;</span><br><span class="line"><span class="comment"># server_name awesome.liaoxuefeng.com; # 配置域名</span></span><br><span class="line"><span class="comment"># 处理静态文件/favicon.ico:</span></span><br><span class="line">    location /favicon.ico &#123;</span><br><span class="line">        root /srv/awesome/www;</span><br><span class="line">    &#125;</span><br><span class="line"><span class="comment"># 处理静态资源:</span></span><br><span class="line">    location ~ ^\/static\/.*$ &#123;</span><br><span class="line">        root /srv/awesome/www;</span><br><span class="line">    &#125;</span><br><span class="line"><span class="comment"># 动态请求转发到9000端口:</span></span><br><span class="line">    location / &#123;</span><br><span class="line">        proxy_pass       http://127.0.0.1:9000;</span><br><span class="line">        proxy_set_header X-Real-IP <span class="variable">$remote_addr</span>;</span><br><span class="line">        proxy_set_header Host <span class="variable">$host</span>;</span><br><span class="line">        proxy_set_header X-Forwarded-For <span class="variable">$proxy_add_x_forwarded_for</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>然后在/etc/nginx/sites-enabled/目录下创建软链接：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">pwd</span></span><br><span class="line">/etc/nginx/sites-enabled</span><br><span class="line">$ sudo ln -s /etc/nginx/sites-available/awesome</span><br><span class="line">让Nginx重新加载配置文件:</span><br><span class="line">$ sudo /etc/init.d/nginx reload</span><br></pre></td></tr></table></figure>
+
+<h3 id="获取ip："><a href="#获取ip：" class="headerlink" title="获取ip："></a>获取ip：</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ifconfig -a</span><br></pre></td></tr></table></figure>
+
+<h2 id="未找到dos2unix报错"><a href="#未找到dos2unix报错" class="headerlink" title="未找到dos2unix报错:"></a>未找到dos2unix报错:</h2><h3 id="1-安装tofrodos"><a href="#1-安装tofrodos" class="headerlink" title="1.安装tofrodos"></a>1.安装tofrodos</h3><p>sudo apt-get install tofrodos<br>实际上它安装了两个工具：todos（相当于unix2dos），和fromdos（相当于dos2unix）</p>
+<h3 id="2-做一些优化"><a href="#2-做一些优化" class="headerlink" title="2.做一些优化"></a>2.做一些优化</h3><p>由于习惯了unix2dos和dos2unix的命令，可以把上面安装的两个工具链接成unix2dos 和dos2unix，或者仅仅是起个别名，并放在启动脚本里。<br>步骤：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ln -s /usr/bin/todos /usr/bin/unix2dos </span><br><span class="line">ln -s /usr/bin/fromdos /usr/bin/dos2unix</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="开发机："><a href="#开发机：" class="headerlink" title="开发机："></a>开发机：</h2><h3 id="Fabric（python2-7）自动化部署工具"><a href="#Fabric（python2-7）自动化部署工具" class="headerlink" title="Fabric（python2.7）自动化部署工具"></a>Fabric（python2.7）自动化部署工具</h3><p>若使用windows，则安装Fabric3（python3)</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install fabric3</span><br></pre></td></tr></table></figure>
+
+<p>fabfile.py: 放在awesome-python-webapp，与www同级</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># -*- coding: utf-8 -*-</span></span><br><span class="line"><span class="string">'''</span></span><br><span class="line"><span class="string">Deployment toolkit in windows envirement.</span></span><br><span class="line"><span class="string">'''</span></span><br><span class="line"><span class="keyword">import</span> os, re, tarfile</span><br><span class="line"><span class="keyword">from</span> datetime <span class="keyword">import</span> datetime</span><br><span class="line"><span class="keyword">from</span> fabric.api <span class="keyword">import</span> *</span><br><span class="line">env.user = <span class="string">'root'</span></span><br><span class="line">env.sudo_user = <span class="string">'root'</span></span><br><span class="line"><span class="comment"># env.hosts = ['123.123.123.123']</span></span><br><span class="line">env.host_string = <span class="string">'47.106.33.242'</span> <span class="comment"># 改成你的服务器ip</span></span><br><span class="line">db_user = <span class="string">'Blog'</span></span><br><span class="line">db_password = <span class="string">'1234567'</span></span><br><span class="line">_TAR_FILE = <span class="string">'dist-awesome.tar.gz'</span></span><br><span class="line">_REMOTE_TMP_TAR = <span class="string">'/tmp/%s'</span> % _TAR_FILE</span><br><span class="line">_REMOTE_BASE_DIR = <span class="string">'/srv/awesome'</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">_current_path</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="keyword">return</span> os.path.abspath(<span class="string">'.'</span>)</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">_now</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="keyword">return</span> datetime.now().strftime(<span class="string">'%y-%m-%d_%H.%M.%S'</span>)</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">build</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="comment"># includes = ['static', 'templates', 'transwarp', 'favicon.ico', '*.py']</span></span><br><span class="line">    <span class="comment"># excludes = ['test', '.*', '*.pyc', '*.pyo']</span></span><br><span class="line">    local(<span class="string">'del dist\\%s'</span> % _TAR_FILE)                   <span class="comment"># 删除旧压缩包</span></span><br><span class="line">    tar = tarfile.open(<span class="string">"dist/%s"</span> % _TAR_FILE,<span class="string">"w:gz"</span>)    <span class="comment"># 创建新压缩包</span></span><br><span class="line">    <span class="keyword">for</span> root,_dir,files <span class="keyword">in</span> os.walk(<span class="string">"www/"</span>):             <span class="comment"># 打包www文件夹</span></span><br><span class="line">        <span class="keyword">for</span> f <span class="keyword">in</span> files:</span><br><span class="line">            <span class="keyword">if</span> <span class="keyword">not</span> ((<span class="string">'.pyc'</span> <span class="keyword">in</span> f) <span class="keyword">or</span> (<span class="string">'.pyo'</span> <span class="keyword">in</span> f)):    <span class="comment"># 排除开发过程调试产生的文件，为了简单点实现，此处没有完全照搬廖老师的参数</span></span><br><span class="line">                fullpath = os.path.join(root,f)</span><br><span class="line">                tar.add(fullpath)</span><br><span class="line">    tar.close()</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">deploy</span><span class="params">()</span>:</span></span><br><span class="line">    newdir = <span class="string">'www-%s'</span> % _now()</span><br><span class="line">    run(<span class="string">'rm -rf %s'</span> % _REMOTE_TMP_TAR)</span><br><span class="line">    put(<span class="string">'dist/%s'</span> % _TAR_FILE, _REMOTE_TMP_TAR)</span><br><span class="line">    <span class="keyword">with</span> cd(_REMOTE_BASE_DIR):</span><br><span class="line">        sudo(<span class="string">'mkdir %s'</span> % newdir)</span><br><span class="line">    <span class="keyword">with</span> cd(<span class="string">'%s/%s'</span> % (_REMOTE_BASE_DIR, newdir)):</span><br><span class="line">        sudo(<span class="string">'tar -xzvf %s'</span> % _REMOTE_TMP_TAR) <span class="comment"># 解压</span></span><br><span class="line">        sudo(<span class="string">'mv www/* .'</span>)          <span class="comment"># 解压后多一层www文件夹，因此向上移动一层</span></span><br><span class="line">        sudo(<span class="string">'rm -rf www'</span>)          <span class="comment"># 删除空文件夹www</span></span><br><span class="line">        sudo(<span class="string">'dos2unix app.py'</span>)     <span class="comment"># 解决windows和linux行尾换行不同问题</span></span><br><span class="line">        sudo(<span class="string">'chmod a+x app.py'</span>)    <span class="comment"># 使app.py可直接执行</span></span><br><span class="line">    <span class="keyword">with</span> cd(_REMOTE_BASE_DIR):</span><br><span class="line">        sudo(<span class="string">'rm -rf www'</span>)               <span class="comment"># 删除旧软链接</span></span><br><span class="line">        sudo(<span class="string">'ln -s %s www'</span> % newdir)   <span class="comment"># 创建新链接</span></span><br><span class="line">        sudo(<span class="string">'chown root:root www'</span>) <span class="comment"># user改为你的linux服务器上的用户名</span></span><br><span class="line">        sudo(<span class="string">'chown -R root:root %s'</span> % newdir) <span class="comment"># 同上</span></span><br><span class="line">    <span class="keyword">with</span> settings(warn_only=<span class="literal">True</span>):</span><br><span class="line">        sudo(<span class="string">'supervisorctl stop awesome'</span>) <span class="comment"># supervisor重启app</span></span><br><span class="line">        sudo(<span class="string">'supervisorctl start awesome'</span>)</span><br><span class="line">        sudo(<span class="string">'/etc/init.d/nginx reload'</span>) <span class="comment"># nginx重启</span></span><br><span class="line">RE_FILES = re.compile(<span class="string">'\r?\n'</span>)</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">rollback</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="string">'''</span></span><br><span class="line"><span class="string">    rollback to previous version</span></span><br><span class="line"><span class="string">    '''</span></span><br><span class="line">    <span class="keyword">with</span> cd(_REMOTE_BASE_DIR):</span><br><span class="line">        r = run(<span class="string">'ls -p -1'</span>)</span><br><span class="line">        files = [s[:<span class="number">-1</span>] <span class="keyword">for</span> s <span class="keyword">in</span> RE_FILES.split(r) <span class="keyword">if</span> s.startswith(<span class="string">'www-'</span>) <span class="keyword">and</span> s.endswith(<span class="string">'/'</span>)]</span><br><span class="line">        files.sort(reverse=<span class="literal">True</span>)</span><br><span class="line">        r = run(<span class="string">'ls -l www'</span>)</span><br><span class="line">        ss = r.split(<span class="string">' -&gt; '</span>)</span><br><span class="line">        <span class="keyword">if</span> len(ss) != <span class="number">2</span>:</span><br><span class="line">            print(<span class="string">'ERROR: \'www\' is not a symbol link.'</span>)</span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line">        current = ss[<span class="number">1</span>]</span><br><span class="line">        print(<span class="string">'Found current symbol link points to: %s\n'</span> % current)</span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            index = files.index(current)</span><br><span class="line">        <span class="keyword">except</span> ValueError <span class="keyword">as</span> e:</span><br><span class="line">            print(<span class="string">'ERROR: symbol link is invalid.'</span>)</span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line">        <span class="keyword">if</span> len(files) == index + <span class="number">1</span>:</span><br><span class="line">            print(<span class="string">'ERROR: already the oldest version.'</span>)</span><br><span class="line">        old = files[index + <span class="number">1</span>]</span><br><span class="line">        print(<span class="string">'=================================================='</span>)</span><br><span class="line">        <span class="keyword">for</span> f <span class="keyword">in</span> files:</span><br><span class="line">            <span class="keyword">if</span> f == current:</span><br><span class="line">                print(<span class="string">'      Current ---&gt; %s'</span> % current)</span><br><span class="line">            <span class="keyword">elif</span> f == old:</span><br><span class="line">                print(<span class="string">'  Rollback to ---&gt; %s'</span> % old)</span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                print(<span class="string">'                   %s'</span> % f)</span><br><span class="line">        print(<span class="string">'=================================================='</span>)</span><br><span class="line">        print(<span class="string">''</span>)</span><br><span class="line">        yn = input (<span class="string">'continue? y/N '</span>)</span><br><span class="line">        <span class="keyword">if</span> yn != <span class="string">'y'</span> <span class="keyword">and</span> yn != <span class="string">'Y'</span>:</span><br><span class="line">            print(<span class="string">'Rollback cancelled.'</span>)</span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line">        print(<span class="string">'Start rollback...'</span>)</span><br><span class="line">        sudo(<span class="string">'rm -rf www'</span>)</span><br><span class="line">        sudo(<span class="string">'ln -s %s www'</span> % old)</span><br><span class="line">        sudo(<span class="string">'chown www-data:www-data www'</span>)</span><br><span class="line">        <span class="keyword">with</span> settings(warn_only=<span class="literal">True</span>):</span><br><span class="line">            sudo(<span class="string">'supervisorctl stop awesome'</span>)</span><br><span class="line">            sudo(<span class="string">'supervisorctl start awesome'</span>)</span><br><span class="line">            sudo(<span class="string">'/etc/init.d/nginx reload'</span>)</span><br><span class="line">        print(<span class="string">'ROLLBACKED OK.'</span>)</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">backup</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="string">'''</span></span><br><span class="line"><span class="string">    Dump entire database on server and backup to local.</span></span><br><span class="line"><span class="string">    '''</span></span><br><span class="line">    dt = _now()</span><br><span class="line">    f = <span class="string">'backup-awesome-%s.sql'</span> % dt</span><br><span class="line">    <span class="keyword">with</span> cd(<span class="string">'/tmp'</span>):</span><br><span class="line">        run(<span class="string">'mysqldump --user=%s --password=%s --skip-opt --add-drop-table --default-character-set=utf8 --quick awesome &gt; %s'</span> % (db_user, db_password, f))</span><br><span class="line">        run(<span class="string">'tar -czvf %s.tar.gz %s'</span> % (f, f))</span><br><span class="line">        get(<span class="string">'%s.tar.gz'</span> % f, <span class="string">'%s/backup/'</span> % _current_path())</span><br><span class="line">        run(<span class="string">'rm -rf %s'</span> % f)</span><br><span class="line">        run(<span class="string">'rm -rf %s.tar.gz'</span> % f)</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">restore2local</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="string">'''</span></span><br><span class="line"><span class="string">    Restore db to local</span></span><br><span class="line"><span class="string">    '''</span></span><br><span class="line">    backup_dir = os.path.join(_current_path(), <span class="string">'backup'</span>)</span><br><span class="line">    fs = os.listdir(backup_dir)</span><br><span class="line">    files = [f <span class="keyword">for</span> f <span class="keyword">in</span> fs <span class="keyword">if</span> f.startswith(<span class="string">'backup-'</span>) <span class="keyword">and</span> f.endswith(<span class="string">'.sql.tar.gz'</span>)] <span class="comment"># 获取备份文件列表</span></span><br><span class="line">    files.sort(reverse = <span class="literal">True</span>) <span class="comment"># 最近的文件排在前面</span></span><br><span class="line">    <span class="keyword">if</span> len(files)==<span class="number">0</span>:</span><br><span class="line">        print(<span class="string">'No backup files found.'</span>)</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    print(<span class="string">'Found %s backup files:'</span> % len(files))</span><br><span class="line">    print(<span class="string">'=================================================='</span>)</span><br><span class="line">    n = <span class="number">0</span></span><br><span class="line">    <span class="keyword">for</span> f <span class="keyword">in</span> files:</span><br><span class="line">        print(<span class="string">'%s: %s'</span> % (n, f))</span><br><span class="line">        n = n + <span class="number">1</span></span><br><span class="line">    print(<span class="string">'=================================================='</span>)</span><br><span class="line">    print(<span class="string">''</span>)</span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        num = int(input (<span class="string">'Restore file: '</span>)) <span class="comment"># 选择恢复哪个备份</span></span><br><span class="line">    <span class="keyword">except</span> ValueError:</span><br><span class="line">        print(<span class="string">'Invalid file number.'</span>)</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    restore_file = files[num]</span><br><span class="line">    yn = input(<span class="string">'Restore file %s: %s? y/N '</span> % (num, restore_file)) <span class="comment"># 确定开始恢复</span></span><br><span class="line">    <span class="keyword">if</span> yn != <span class="string">'y'</span> <span class="keyword">and</span> yn != <span class="string">'Y'</span>:</span><br><span class="line">        print(<span class="string">'Restore cancelled.'</span>)</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    print(<span class="string">'Start restore to local database...'</span>)</span><br><span class="line">    p = input(<span class="string">'Input mysql root password: '</span>)</span><br><span class="line">    sqls = [</span><br><span class="line">        <span class="string">'drop database if exists awesome;'</span>,</span><br><span class="line">        <span class="string">'create database awesome;'</span>, </span><br><span class="line">        <span class="string">'alter database awesome default character set utf8 collate utf8_general_ci;'</span> <span class="comment"># 修改为utf8字符集</span></span><br><span class="line">        <span class="string">'grant select, insert, update, delete on awesome.* to \'%s\'@\'localhost\' identified by \'%s\';'</span> % (db_user, db_password)</span><br><span class="line">    ]</span><br><span class="line">    <span class="keyword">for</span> sql <span class="keyword">in</span> sqls:</span><br><span class="line">        local(<span class="string">r'mysql -uroot -p%s -e "%s"'</span> % (p, sql))  <span class="comment"># 删除旧数据库，新建数据库，授权给用户</span></span><br><span class="line">    extract(<span class="string">'backup\\%s'</span> % restore_file, <span class="string">'backup\\'</span>)    <span class="comment"># 解压</span></span><br><span class="line">    <span class="keyword">with</span> lcd(<span class="string">'backup'</span>):</span><br><span class="line">        <span class="comment"># linux系统和windows系统之间数据库导入导出，可能因为字符集不同出现'unknown command \\'错误</span></span><br><span class="line">        <span class="comment"># 通过在创建数据库后修改为utf8字符集，以及导入时指定--default-character-set=utf8，解决这个问题</span></span><br><span class="line">        local(<span class="string">r'mysql -uroot -p%s --default-character-set=utf8 awesome &lt; %s'</span> % (p, restore_file[:<span class="number">-7</span>])) <span class="comment"># 导入数据库</span></span><br><span class="line">        local(<span class="string">'del %s'</span> % restore_file[:<span class="number">-7</span>]) <span class="comment"># 删除解压出的文件</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">extract</span><span class="params">(tar_path, target_path)</span>:</span></span><br><span class="line">    <span class="string">'''</span></span><br><span class="line"><span class="string">    解压tar.gz文件到目标目录</span></span><br><span class="line"><span class="string">    '''</span></span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        tar = tarfile.open(tar_path, <span class="string">"r:gz"</span>)</span><br><span class="line">        file_names = tar.getnames()</span><br><span class="line">        <span class="keyword">for</span> file_name <span class="keyword">in</span> file_names:</span><br><span class="line">            tar.extract(file_name, target_path)</span><br><span class="line">        tar.close()</span><br><span class="line">    <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">        <span class="keyword">raise</span> e</span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">    build()</span><br><span class="line">    deploy()</span><br><span class="line">    <span class="comment"># rollback()</span></span><br><span class="line">    <span class="comment"># backup()</span></span><br><span class="line">    <span class="comment"># restore2local()</span></span><br><span class="line">    input()</span><br></pre></td></tr></table></figure>
+<p>直接运行fabfile.py即可连接linux服务器；</p>
+<h3 id="如果使用Linux："><a href="#如果使用Linux：" class="headerlink" title="如果使用Linux："></a>如果使用Linux：</h3><p>提交修改:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">fab build</span><br></pre></td></tr></table></figure>
+<p>实行应用:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">fab deploy</span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+      
+  <div class="popular-posts-header">相关文章</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2019\11\09\阿里云服务器部署\" rel="bookmark">阿里云服务器部署</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2019\11\09\博客近期文章功能\" rel="bookmark">博客近期文章功能</a></div>
+    </li>
+  </ul>
+
+      
+        <div class="reward-container">
+  <div></div>
+  <button disable="enable" onclick="var qr = document.getElementById(&quot;qr&quot;); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechatpay.png" alt="Govin 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay.png" alt="Govin 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Windows/" rel="tag"># Windows</a>
+              <a href="/tags/Linux/" rel="tag"># Linux</a>
+              <a href="/tags/Python/" rel="tag"># Python</a>
+              <a href="/tags/Web/" rel="tag"># Web</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+                <a href="/2019/11/03/hexo-blog/" rel="next" title="Hexo一些功能的实现">
+                  <i class="fa fa-chevron-left"></i> Hexo一些功能的实现
+                </a>
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+                <a href="/2019/11/09/%E5%8D%9A%E5%AE%A2%E8%BF%91%E6%9C%9F%E6%96%87%E7%AB%A0%E5%8A%9F%E8%83%BD/" rel="prev" title="博客近期文章功能">
+                  博客近期文章功能 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    <div class="comments" id="comments"></div>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Linux端-服务器）Ubuntu18-04-3："><span class="nav-number">1.</span> <span class="nav-text">Linux端(服务器）Ubuntu18.04.3：</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#安装："><span class="nav-number">1.1.</span> <span class="nav-text">安装：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#初始化Mysql数据库："><span class="nav-number">1.2.</span> <span class="nav-text">初始化Mysql数据库：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#定义目录结构："><span class="nav-number">1.3.</span> <span class="nav-text">定义目录结构：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#使用虚拟环境："><span class="nav-number">1.4.</span> <span class="nav-text">使用虚拟环境：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#安装supervisor"><span class="nav-number">1.5.</span> <span class="nav-text">安装supervisor</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#nginx配置："><span class="nav-number">1.6.</span> <span class="nav-text">nginx配置：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#获取ip："><span class="nav-number">1.7.</span> <span class="nav-text">获取ip：</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#未找到dos2unix报错"><span class="nav-number">2.</span> <span class="nav-text">未找到dos2unix报错:</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-安装tofrodos"><span class="nav-number">2.1.</span> <span class="nav-text">1.安装tofrodos</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-做一些优化"><span class="nav-number">2.2.</span> <span class="nav-text">2.做一些优化</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#开发机："><span class="nav-number">3.</span> <span class="nav-text">开发机：</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Fabric（python2-7）自动化部署工具"><span class="nav-number">3.1.</span> <span class="nav-text">Fabric（python2.7）自动化部署工具</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#如果使用Linux："><span class="nav-number">3.2.</span> <span class="nav-text">如果使用Linux：</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <img class="site-author-image" itemprop="image" alt="Govin"
+    src="/images/header.jpg">
+  <p class="site-author-name" itemprop="name">Govin</p>
+  <div class="site-description" itemprop="description">“坚持”是一件幸福的事</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">5</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="mailto:360996299@qq.com" title="E-Mail" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+      <!--近期文章版块 began-->
+          
+              <div class="links-of-blogroll motion-element links-of-blogroll-block">
+                <div class="links-of-blogroll-title">
+                  <i class="fa fa-history fa-" aria-hidden="true"></i>
+                  近期文章
+                </div>
+                <ul class="links-of-blogroll-list">
+                  
+                  
+                    <li class='my-links-of-blogroll-li'>
+                      <a href="/2019/11/09/%E9%98%BF%E9%87%8C%E4%BA%91%E6%9C%8D%E5%8A%A1%E5%99%A8%E9%83%A8%E7%BD%B2/" title= "阿里云服务器部署" target="_blank">阿里云服务器部署</a>
+                    </li>
+                  
+                    <li class='my-links-of-blogroll-li'>
+                      <a href="/2019/11/09/%E5%8D%9A%E5%AE%A2%E8%BF%91%E6%9C%9F%E6%96%87%E7%AB%A0%E5%8A%9F%E8%83%BD/" title= "博客近期文章功能" target="_blank">博客近期文章功能</a>
+                    </li>
+                  
+                    <li class='my-links-of-blogroll-li'>
+                      <a href="/2019/11/07/%E9%83%A8%E7%BD%B2Python%20Web%20App/" title= "部署Python Web App" target="_blank">部署Python Web App</a>
+                    </li>
+                  
+                    <li class='my-links-of-blogroll-li'>
+                      <a href="/2019/11/03/hexo-blog/" title= "Hexo一些功能的实现" target="_blank">Hexo一些功能的实现</a>
+                    </li>
+                  
+                    <li class='my-links-of-blogroll-li'>
+                      <a href="/2019/11/03/my-first-blog/" title= "搭建Github+Hexo的Blog" target="_blank">搭建Github+Hexo的Blog</a>
+                    </li>
+                                    
+                </ul>
+              </div>
+          
+          <!--近期文章版块 end-->
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Govin</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">19k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">32 分钟</span>
+</div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/pisces.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+  var GUEST = ['nick', 'mail', 'link'];
+  var guest = 'nick,mail,link';
+  guest = guest.split(',').filter(item => {
+    return GUEST.includes(item);
+  });
+  new Valine({
+    el: '#comments',
+    verify: false,
+    notify: false,
+    appId: 'gSJCta1oDVK7aIDL4mJtvxb1-gzGzoHsz',
+    appKey: 'ajBiMTg38GsxlSkCdwP2jowR',
+    placeholder: "说点什么吧~ ^_^",
+    avatar: 'mm',
+    meta: guest,
+    pageSize: '10' || 10,
+    visitor: true,
+    lang: '' || 'zh-cn',
+    path: location.pathname,
+    recordIP: false,
+    serverURLs: ''
+  });
+}, window.Valine);
+</script>
+
+
+  <!-- badApplePlayer -->
+
+  <!-- Your XlchPlayerKey -->
+  <script>XlchKey="Such";</script>
+  <!-- font-awesome 4.2.0 -->
+  <link href="https://lib.baomitu.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+  <!-- JQuery-mousewheel 3.1.9 -->
+  <script src="https://lib.baomitu.com/jquery-mousewheel/3.1.9/jquery.mousewheel.min.js"></script>
+  <!-- Scrollbar -->
+  <script src="https://static.https.badapple.top/BadApplePlayer/js/scrollbar.js"></script>
+  <!-- BadApplePlayer -->
+  <script src="https://static.https.badapple.top/BadApplePlayer/Player.js"></script>
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","model":{"jsonPath":"/live2dw/assets/hijiki.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":false},"log":false,"tagMode":false});</script></body>
+</html>
