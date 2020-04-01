@@ -1,6 +1,218 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>Docker+Uwsgi+Nginx部署Django项目</title>
+    <url>/2020/04/01/Docker+Uwsgi+Nginx%E9%83%A8%E7%BD%B2Django%E9%A1%B9%E7%9B%AE/</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><h2 id="版本信息："><a href="#版本信息：" class="headerlink" title="版本信息："></a>版本信息：</h2><p>系统：Centos7<br>Python:3.6.2<br>Django：2.2.0</p><p>##Docker配置<br>docker安装方法请自行搜索并安装。</p><p>创建一个Centos容器，让它在后台运行：</p><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker run -d --name freestudy --network host centos:7 tail -f /dev/null</span><br></pre></td></tr></table></figure><a id="more"></a>
+
+
+
+<p>-d：让它在后台运行<br>    –name freestudy：设置名字。<br>    –network host：让它加入宿主机网络，从而可以连上外网<br>    centos:latest：要运行的镜像及其版本<br>    tail -f /dev/null：让容器一直执行某条命令，以免没有任务而自动退出</p>
+<p>进入容器：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker <span class="built_in">exec</span> -it freestudy bash</span><br></pre></td></tr></table></figure>
+<p>-it：打开该容器的输入（stdin）和终端（tty）。 bash：在容器中执行bash命令，启动一个shell，供用户操作。</p>
+<p>退出容器：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Ctrl+D</span><br></pre></td></tr></table></figure>
+
+<p>##Python及插件库环境配置<br>将Django项目从宿主机拷贝到容器：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker cp /root/django freestudy:/root/</span><br></pre></td></tr></table></figure>
+<p>之后便可以在Centos容器里部署Django项目，不满意就销毁重建。</p>
+<p>安装Python及pip<br>进入容器：<br>安装Python解释器：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">yum install epel-release		<span class="comment"># 添加epel软件库</span></span><br><span class="line">yum install python36			<span class="comment"># 安装指定版本的python</span></span><br></pre></td></tr></table></figure>
+<p>这里默认安装的是3.6.8版本</p>
+<p>我想要安装3.6.2，直接用之前传好的文件安装吧</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker cp /tmp/Python-3.6.2.tgz 04c193b9e394:/</span><br></pre></td></tr></table></figure>
+
+<p>安装ifconfig</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">yum install -y net-tools</span><br></pre></td></tr></table></figure>
+
+<p>安装依赖包</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">yum install openssl-devel bzip2-devel expat-devel gdbm-devel readline-devel sqlite-devel gcc gcc-c++  openssl-devel libffi-devel python-devel mariadb-devel</span><br></pre></td></tr></table></figure>
+
+<p>解压安装Python：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">tar -xzvf Python-3.6.2.tgz -C  /tmp</span><br></pre></td></tr></table></figure>
+
+<p>安装至/usr/local目录：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span>  /tmp/Python-3.6.2/</span><br><span class="line">./configure --prefix=/usr/<span class="built_in">local</span></span><br><span class="line">yum -y install gcc automake autoconf libtool make</span><br><span class="line">make</span><br><span class="line">make altinstall</span><br></pre></td></tr></table></figure>
+
+<p>更改/usr/bin/python链接</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ln -s /usr/<span class="built_in">local</span>/bin/python3.6 /usr/bin/python3</span><br></pre></td></tr></table></figure>
+
+<p>安装pip：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">yum install python36-pip</span><br></pre></td></tr></table></figure>
+
+<p>cd到项目requirements.txt目录下：<br>安装依赖库：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip3.6 install -r requirements.txt</span><br></pre></td></tr></table></figure>
+<p>报错:需要更新pip</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip3 install --upgrade pip</span><br></pre></td></tr></table></figure>
+
+<p>速度慢，看下上面报错是超时退出了。<br>遇到pip3 install的速度巨慢时，可以更换源：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@localhost ~]<span class="comment"># cd </span></span><br><span class="line">[root@localhost ~]<span class="comment"># mkdir .pip</span></span><br><span class="line">[root@localhost ~]<span class="comment"># cd .pip</span></span><br><span class="line">[root@localhost .pip]<span class="comment"># vim pip.conf</span></span><br></pre></td></tr></table></figure>
+<p>写入如下内容</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[global]</span><br><span class="line">index-url=http://pypi.douban.com/simple</span><br><span class="line">trusted-host = pypi.douban.com</span><br></pre></td></tr></table></figure>
+<p>再次报错：<br>ERROR: Command errored out with exit status 1: python setup.py egg_info Check the logs for full command output.</p>
+<p>升级setuptools：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip3.6 install --upgrade setuptools</span><br></pre></td></tr></table></figure>
+
+<p>出现报错：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Collecting django-pure-pagination</span><br><span class="line">  Downloading http://pypi.doubanio.com/packages/55/43/50c475f408d3350cec340855970a5ce02ea12f5a53d520315f200b4847a1/django-pure-pagination-0.3.0.tar.gz (10 kB)</span><br><span class="line">    ERROR: Command errored out with <span class="built_in">exit</span> status 1:</span><br><span class="line">     <span class="built_in">command</span>: /usr/bin/python3 -c <span class="string">'import sys, setuptools, tokenize; sys.argv[0] = '</span><span class="string">"'"</span><span class="string">'/tmp/pip-install-belyzfl8/django-pure-pagination/setup.py'</span><span class="string">"'"</span><span class="string">'; __file__='</span><span class="string">"'"</span><span class="string">'/tmp/pip-install-belyzfl8/django-pure-pagination/setup.py'</span><span class="string">"'"</span><span class="string">';f=getattr(tokenize, '</span><span class="string">"'"</span><span class="string">'open'</span><span class="string">"'"</span><span class="string">', open)(__file__);code=f.read().replace('</span><span class="string">"'"</span><span class="string">'\r\n'</span><span class="string">"'"</span><span class="string">', '</span><span class="string">"'"</span><span class="string">'\n'</span><span class="string">"'"</span><span class="string">');f.close();exec(compile(code, __file__, '</span><span class="string">"'"</span><span class="string">'exec'</span><span class="string">"'"</span><span class="string">'))'</span> egg_info --egg-base /tmp/pip-install-belyzfl8/django-pure-pagination/pip-egg-info</span><br><span class="line">         cwd: /tmp/pip-install-belyzfl8/django-pure-pagination/</span><br><span class="line">    Complete output (7 lines):</span><br><span class="line">    Traceback (most recent call last):</span><br><span class="line">      File <span class="string">"&lt;string&gt;"</span>, line 1, <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">      File <span class="string">"/tmp/pip-install-belyzfl8/django-pure-pagination/setup.py"</span>, line 5, <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">        README = readme.read()</span><br><span class="line">      File <span class="string">"/usr/local/lib/python3.6/encodings/ascii.py"</span>, line 26, <span class="keyword">in</span> decode</span><br><span class="line">        <span class="built_in">return</span> codecs.ascii_decode(input, self.errors)[0]</span><br><span class="line">    UnicodeDecodeError: <span class="string">'ascii'</span> codec can<span class="string">'t decode byte 0xc3 in position 672: ordinal not in range(128)</span></span><br><span class="line"><span class="string">    ----------------------------------------</span></span><br><span class="line"><span class="string">ERROR: Command errored out with exit status 1: python setup.py egg_info Check the logs for full command output.</span></span><br></pre></td></tr></table></figure>
+<p>解决：<br>命令行输入：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">export</span> LANG=en_US</span><br><span class="line"><span class="built_in">export</span> LC_ALL=en_US.UTF-8</span><br></pre></td></tr></table></figure>
+
+<p>##安装Mariadb<br>安装Mariadb数据库容器</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker pull mariadb</span><br><span class="line">docker run --name mariadb -p 3301:3306 -d -v /root/mdbdata:/var/lib/mysql  -e MYSQL_ROOT_PASSWORD=root1234 mariadb</span><br></pre></td></tr></table></figure>
+<p>-d: 表示detach，后台运行并打印container ID；<br>-p: 端口，3301:3306表示将容器中的3306端口公开给host的3301端口；<br>-v: 表示volume，用来设置数据文件存放的位置，/root/mdbdata:/var/lib/mysql表示将host中当前用户文件夹”/root/mdbdata”挂载于容器中的/var/lib/mysql目录，这样即使容器被删除，数据文件还是可以保留；<br>-e: 表示environment，用来设置用户及密码等环境变量，MYSQL_ROOT_PASSWORD=admin表示将root的密码设置为root1234（只在第一次登陆数据库时使用）；<br>–name: 表示容器的名称，例如现在这个数据库容器的名称为mariadb<br>命令的最后是镜像的名称，mariadb</p>
+<p>修改为自启动：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker container update --restart=always 容器id</span><br></pre></td></tr></table></figure>
+
+<p>测试登陆：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql -uroot -proot1234 -h127.0.0.1 -P 3301 -D mysql</span><br></pre></td></tr></table></figure>
+
+<p>创建数据库：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">CREATE DATABASE freestudy DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;</span><br><span class="line">（要指定编码，不然后面migrate数据迁移会报错）</span><br></pre></td></tr></table></figure>
+
+<p>查询容器数据库ip：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker inspect --format <span class="string">'&#123;&#123; .NetworkSettings.IPAddress &#125;&#125;'</span> 容器id</span><br><span class="line">172.17.0.3</span><br></pre></td></tr></table></figure>
+
+<p>查看宿主机ip：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ifconfig</span><br><span class="line">172.17.0.1</span><br></pre></td></tr></table></figure>
+
+<p>进入应用容器，同样适用ifconfig查看ip<br>172.17.0.1</p>
+<p>进入应用容器，cd到settings.py,vim将mysql连接host修改：<br>172.17.0.3</p>
+<p>##测试项目<br>执行</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">python3 manage.py makemigrations</span><br></pre></td></tr></table></figure>
+<p>将缺少的库一个个地pip3 install<br>遇到找不到的库就在名称前面加django-<br>如：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip install django-formtools</span><br><span class="line">pip install django-import-export</span><br></pre></td></tr></table></figure>
+<p>（两个容器连接成功）</p>
+<p>测试运行：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">python3 manage.py runserver 0.0.0.0:80</span><br></pre></td></tr></table></figure>
+
+<p>打开一个新对话：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl 127.0.0.1:80</span><br></pre></td></tr></table></figure>
+<p>成功访问。</p>
+<p>##安装uWSGI服务器</p>
+<p>安装uWSGI：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip install uwsgi</span><br></pre></td></tr></table></figure>
+
+<p>进入django项目目录：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mkdir conf</span><br><span class="line"><span class="built_in">cd</span> conf</span><br><span class="line">mkdir uwsgi</span><br><span class="line">vi uwsgi/uwsgi.ini</span><br></pre></td></tr></table></figure>
+<p>输入配置：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># mysite_uwsgi.ini file</span></span><br><span class="line">[uwsgi]</span><br><span class="line"><span class="comment"># Django-related settings</span></span><br><span class="line"><span class="comment"># the base directory (full path)</span></span><br><span class="line"><span class="built_in">chdir</span>           = /root/django/FreeStudy</span><br><span class="line"><span class="comment"># Django's wsgi file</span></span><br><span class="line">module          = FreeStudy.wsgi</span><br><span class="line"><span class="comment"># the virtualenv (full path)</span></span><br><span class="line"><span class="comment"># process-related settings</span></span><br><span class="line"><span class="comment"># master</span></span><br><span class="line">master          = <span class="literal">true</span></span><br><span class="line"><span class="comment"># maximum number of worker processes</span></span><br><span class="line">processes       = 10</span><br><span class="line"><span class="comment"># the socket (use the full path to be safe</span></span><br><span class="line">socket          = 127.0.0.1:8000</span><br><span class="line"><span class="comment"># ... with appropriate permissions - may be needed</span></span><br><span class="line"><span class="comment"># chmod-socket    = 664</span></span><br><span class="line"><span class="comment"># clear environment on exit</span></span><br><span class="line">vacuum          = <span class="literal">true</span></span><br><span class="line">logto = /tmp/mylog.log</span><br></pre></td></tr></table></figure>
+<p>注：<br>    chdir： 表示需要操作的目录，也就是项目的目录<br>    module： wsgi文件的路径<br>    processes： 进程数<br>    virtualenv：虚拟环境的目录</p>
+<p>使用配置文件启动uWSGI服务器（默认在后台运行）：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">uwsgi --ini uwsgi/uwsgi.ini</span><br></pre></td></tr></table></figure>
+<p>显示运行成功了。</p>
+<p>测试运行：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">uwsgi --http :8000 --module FreeStudy.wsgi</span><br></pre></td></tr></table></figure>
+<p>打开新对话：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl 127.0.0.1:8000</span><br></pre></td></tr></table></figure>
+<p>成功获取。</p>
+<p>停止uWSGI服务器：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">uwsgi --stop uwsgi/uwsgi.pid</span><br></pre></td></tr></table></figure>
+
+
+<p>##安装Nginx</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">yum install nginx</span><br></pre></td></tr></table></figure>
+<p>###配置：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">conf/nginx/uc_nginx.conf</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># the upstream component nginx needs to connect to</span></span><br><span class="line">upstream django &#123;</span><br><span class="line"><span class="comment"># server unix:///path/to/your/mysite/mysite.sock; # for a file socket</span></span><br><span class="line">server 127.0.0.1:8000; <span class="comment"># for a web port socket (we'll use this first)</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="comment"># configuration of the server</span></span><br><span class="line">server &#123;</span><br><span class="line"><span class="comment"># the port your site will be served on</span></span><br><span class="line">listen 80;</span><br><span class="line"><span class="comment"># the domain name it will serve for</span></span><br><span class="line">server_name 服务器ip; <span class="comment"># substitute your machine's IP address or FQDN</span></span><br><span class="line">charset utf-8;</span><br><span class="line"><span class="comment"># max upload size</span></span><br><span class="line">client_max_body_size 75M; <span class="comment"># adjust to taste</span></span><br><span class="line"><span class="comment"># Django media</span></span><br><span class="line">location /media &#123;</span><br><span class="line"> <span class="built_in">alias</span> /root/django/FreeStudy/media; <span class="comment"># 指向django的media目录</span></span><br><span class="line">&#125;</span><br><span class="line">location /static &#123;</span><br><span class="line"> <span class="built_in">alias</span> /root/django/FreeStudy/static; <span class="comment"># 指向django的static目录</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="comment"># Finally, send all non-media requests to the Django server.</span></span><br><span class="line">location / &#123;</span><br><span class="line"> uwsgi_pass 127.0.0.1:8000;</span><br><span class="line"> include  /etc/nginx/uwsgi_params; <span class="comment"># the uwsgi_params file you installed</span></span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>将上述配置文件加入到nginx的启动配置文件中:</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ln -s /root/django/FreeStudy/conf/nginx/uc_nginx.conf /etc/nginx/conf.d/</span><br></pre></td></tr></table></figure>
+
+<p>拉取所有需要的static file 到同一个目录<br>在django的setting文件中，添加下面一行内容：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">STATIC_ROOT = os.path.join(BASE_DIR, <span class="string">"static/"</span>)</span><br></pre></td></tr></table></figure>
+<p>运行命令</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">python3 manage.py collectstatic</span><br></pre></td></tr></table></figure>
+
+<p>启动nginx：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">/usr/sbin/nginx</span><br></pre></td></tr></table></figure>
+<p>没有报错，查看进程：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">netstat -ntlp</span><br></pre></td></tr></table></figure>
+<p>没有看到uwsgi监听的端口</p>
+<p>###解决Uwsgi没有启动<br>使用curl 127.0.0.1:8000查看返回：<br>报错：<br>curl: (7) Failed connect to 127.0.0.1:8000; Connection refused</p>
+<p>uwsgi错误检查：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">查看uwsgi进程运行:</span><br><span class="line"> ps -ef|grep uwsgi</span><br><span class="line"></span><br><span class="line">没有发现运行的进程。</span><br><span class="line"></span><br><span class="line">停止uwsgi：</span><br><span class="line">pkill -f uwsgi -9</span><br><span class="line"></span><br><span class="line">启动uwsgi：</span><br><span class="line">uwsgi  --ini  uwsgi.ini</span><br><span class="line"></span><br><span class="line">再次查看进程，还是没有！</span><br><span class="line">多次尝试修改配置文件，还是不行</span><br></pre></td></tr></table></figure>
+
+<p>解决：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">要先运行项目：</span><br><span class="line">python3 manage.py runserver 0.0.0.0:8000</span><br><span class="line">注意端口是8000，要与uwsgi中配置一致</span><br><span class="line"></span><br><span class="line">执行uwsgi配置运行服务器：</span><br><span class="line">uwsgi -i /root/django/FreeStudy/conf/uwsgi/uwsgi.ini &amp; </span><br><span class="line">与刚开始上面不一样的输出。</span><br></pre></td></tr></table></figure>
+
+<p>查看进程:</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ps -ef|grep uwsgi</span><br></pre></td></tr></table></figure>
+<p><img src="/2020/04/01/Docker+Uwsgi+Nginx%E9%83%A8%E7%BD%B2Django%E9%A1%B9%E7%9B%AE/1.png" alt="1"></p>
+<p>多了很多进程，一开始失败时只有最下面一个。大概率成功运行了。</p>
+<p>在kill掉nginx进程的前提下，再次开启nginx</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">/usr/sbin/nginx</span><br></pre></td></tr></table></figure>
+<p>并检查检查，成功发行uwsgi进程</p>
+<p><img src="/2020/04/01/Docker+Uwsgi+Nginx%E9%83%A8%E7%BD%B2Django%E9%A1%B9%E7%9B%AE/2.png" alt="2"></p>
+<p>使用curl ip地址<br>成功获取页面。</p>
+<p>###获取静态文件报错<br>浏览器发现静态文件获取有误，报403错误，图片没有加载出来。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> /etc/nginx</span><br><span class="line">vim nginx.conf</span><br><span class="line"></span><br><span class="line">将user nginx;</span><br><span class="line">改为：user root;</span><br><span class="line"></span><br><span class="line">重启nginx：</span><br><span class="line">/usr/sbin/nginx -s reload</span><br></pre></td></tr></table></figure>
+<p>成功。</p>
+<p>注意：<br>当使用python3 manage.py createsuperuser等出现报错：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ERRORS:</span><br><span class="line">?: (staticfiles.E002) The STATICFILES_DIRS setting should not contain the STATIC_ROOT setting.</span><br><span class="line"></span><br><span class="line">将settings.py修改：</span><br><span class="line">STATIC_ROOT = os.path.join(BASE_DIR, <span class="string">"/static/"</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">python3 manage.py createsuperuser</span><br><span class="line"></span><br><span class="line">出现reload不存在问题：</span><br><span class="line"><span class="built_in">cd</span> /usr/<span class="built_in">local</span>/lib/python3.6/site-packages/</span><br><span class="line">vim sitecustomize_back.py</span><br><span class="line">内容为：</span><br><span class="line"><span class="comment">#coding=utf8</span></span><br><span class="line">             import sys</span><br><span class="line">             reload(sys)</span><br><span class="line">             sys.setdefaultencoding(<span class="string">'utf8'</span>)</span><br><span class="line"></span><br><span class="line">出现报错：</span><br><span class="line">UnicodeEncodeError: <span class="string">'ascii'</span> codec can<span class="string">'t encode characters in position 0-2: ordinal not in range(128)</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">执行：</span></span><br><span class="line"><span class="string">export PYTHONIOENCODING=utf-8</span></span><br></pre></td></tr></table></figure>
+
+<p>##设置外网访问服务器数据库：<br>###配置</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">GRANT ALL PRIVILEGES ON *.* TO <span class="string">'root'</span>@<span class="string">'%'</span> IDENTIFIED BY <span class="string">'GR2516361'</span> WITH GRANT OPTION;</span><br><span class="line"></span><br><span class="line">flush privileges;</span><br></pre></td></tr></table></figure>
+
+<p>###Navicat无法连接<br>解决:<br>    上面修改了访问限权，容器之间的访问会受影响，需要到项目settings.py<br>    修改数据库连接配置，将连接密码由原来的root1234改为外部连接的密码</p>
+<p>nginx：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">netstat -ntlp 查看进程状态</span><br><span class="line"><span class="built_in">kill</span> nginx的进程</span><br><span class="line"></span><br><span class="line">重新启动:</span><br><span class="line">/usr/sbin/nginx -s reload</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2020/04/01/Docker+Uwsgi+Nginx%E9%83%A8%E7%BD%B2Django%E9%A1%B9%E7%9B%AE/4.png" alt="4"></p>
+<p>进入mariadb容器</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">apt-get update</span><br><span class="line">apt-get install vim</span><br><span class="line"></span><br><span class="line">grep -rn <span class="string">"skip-networking"</span> *</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2020/04/01/Docker+Uwsgi+Nginx%E9%83%A8%E7%BD%B2Django%E9%A1%B9%E7%9B%AE/5.png" alt="5"></p>
+<p><img src="/2020/04/01/Docker+Uwsgi+Nginx%E9%83%A8%E7%BD%B2Django%E9%A1%B9%E7%9B%AE/6.png" alt="6"></p>
+<p>确保已经被注释掉了</p>
+<p>###创建Mariadb镜像备份：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker commit -m<span class="string">"mariadb"</span> -a<span class="string">"Such"</span> 容器id mariadb:v1</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">docker run -t -i mariadb:v1 /bin/bash</span><br><span class="line"></span><br><span class="line">docker run --name mariadb –network=host -p 3301:3306 -d -v /root/mdbdata:/var/lib/mysql  -e MYSQL_ROOT_PASSWORD=root1234 mariadb:v1</span><br></pre></td></tr></table></figure>
+
+<p>##redis容器<br>实现邮箱验证码功能还要安装redis容器：<br>拉取镜像：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker pull redis:latest</span><br></pre></td></tr></table></figure>
+
+<p>运行容器：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker run -itd --name redis -p 6379:6379 redis</span><br></pre></td></tr></table></figure>
+<p>邮箱验证码运行成功。</p>
+<p>##解决拉取pull速度慢：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">	vim /etc/docker/daemon.json</span><br><span class="line">	</span><br><span class="line">	&#123;</span><br><span class="line">  <span class="string">"registry-mirrors"</span>: [<span class="string">"https://9cpn8tt6.mirror.aliyuncs.com"</span>]</span><br><span class="line">&#125;</span><br><span class="line">	</span><br><span class="line">	重启服务：</span><br><span class="line">	systemctl daemon-reload</span><br><span class="line">systemctl restart docker</span><br><span class="line">		</span><br><span class="line">		注意：此操作会将部分容器重启甚至停掉，需要使用docker start 容器名 开启。</span><br><span class="line">		并且mariadb的ip也变更了，需要至settings.py更新ip地址。</span><br><span class="line">		重启应用：</span><br><span class="line">			停止uwsgi：</span><br><span class="line">			ps -ef|grep uwsgi 查看进程</span><br><span class="line">			pkill -f uwsgi -9</span><br><span class="line">			nginx：</span><br><span class="line">			netstat -ntlp 查看进程状态</span><br><span class="line">			<span class="built_in">kill</span> nginx的进程</span><br><span class="line">		</span><br><span class="line">			python3 manage.py runserver 0.0.0.0:8000</span><br><span class="line">			</span><br><span class="line">			启动uwsgi与nginx：</span><br><span class="line">			uwsgi  --ini  uwsgi.ini (有时会失灵）</span><br><span class="line">			可使用uwsgi -i /root/django/FreeStudy/conf/uwsgi/uwsgi.ini &amp;</span><br><span class="line">			</span><br><span class="line">			/usr/sbin/nginx -s reload</span><br><span class="line">```			</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">##xadmin无法加载css与js：</span></span><br><span class="line">```bash</span><br><span class="line"> python3 manage.py collectstatic</span><br></pre></td></tr></table></figure>
+<p>自动把后台CSS样式和其他相关文件资源收集到/static/目录下。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">报错：</span><br><span class="line">django.core.exceptions.ImproperlyConfigured: You<span class="string">'re using the staticfiles app without having set the STATIC_ROOT setting to a filesystem path.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">settings.py加入：</span></span><br><span class="line"><span class="string">STATIC_ROOT = os.path.join(BASE_DIR, '</span>static<span class="string">')</span></span><br></pre></td></tr></table></figure>
+
+
+<p>##域名解析：<br>添加解析后，将nginx配置文件（uc_nginx.conf)修改,<br>将ip地址改为你购买的域名地址</p>
+<p>##vim相关操作：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">输入 i表示插入</span><br><span class="line">操作完成后ESC</span><br><span class="line">输入：q直接退出，:q!强制退出</span><br><span class="line">输入：wq保存并退出</span><br><span class="line">直接输入ggV全选单行，输入ggVG全选全部，再接着输入d，即删除全部。</span><br></pre></td></tr></table></figure>
+
+<p>##容器操作：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ctrl+D可退出容器路径</span><br></pre></td></tr></table></figure>
+
+<p>制作应用镜像备份：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker ps</span><br><span class="line">docker commit -m<span class="string">"freestudy"</span> -a<span class="string">"Such"</span> 容器id freestudy:v1</span><br></pre></td></tr></table></figure>
+
+<p>删除镜像：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker rmi 镜像id</span><br></pre></td></tr></table></figure>
+
+
+<p>##更新文件：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">可使用xftp直接修改文件，然后复制到容器实现修改。</span><br><span class="line">docker cp /root/django/FreeStudy/apps/users/models.py freestudy:/root/django/FreeStudy/apps/users/models.py</span><br><span class="line"></span><br><span class="line">多个文件：</span><br><span class="line">新建一个文件夹，将文件放至其中，</span><br><span class="line">docker cp /root/django/FreeStudy/templates/html/. freestudy:/root/django/FreeStudy/templates</span><br><span class="line">加多一个 . 即可将全部文件传输。</span><br></pre></td></tr></table></figure>
+
+<p>涉及到数据表的修改要makemigrations与 migrate<br>然后停止uwsgi（避免占用8000端口），再运行python3 manage.py runserver 0.0.0.0:8000<br>启动uwsgi</p>
+<p>##邮箱服务器安全性<br>之前邮箱服务器使用了账号密码不安全，现改为授权码，同时之前使用的密码登陆服务失效，需要重新部署：<br>EMAIL_HOST_PASSWORD = ‘授权码’</p>
+<p>重新runserver，发现mysql连接报错。<br>尝试改了host地址，服务器的ip，数据库容器ip地址都不行。。<br>最后使用数据库容器ip 172.17.0.2，密码是外部连接的密码！连接成功。。稀奇古怪呀！</p>
+]]></content>
+      <categories>
+        <category>Docker</category>
+      </categories>
+      <tags>
+        <tag>Docker</tag>
+        <tag>Uwsgi</tag>
+        <tag>Nginx</tag>
+        <tag>Django</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>阿里云服务器部署</title>
     <url>/2019/11/09/%E9%98%BF%E9%87%8C%E4%BA%91%E6%9C%8D%E5%8A%A1%E5%99%A8%E9%83%A8%E7%BD%B2/</url>
     <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><h2 id="服务器"><a href="#服务器" class="headerlink" title="服务器"></a>服务器</h2><p>阿里云个人服务器体验版</p><h3 id="系统"><a href="#系统" class="headerlink" title="系统"></a>系统</h3><p>Ubuntu14.04 32位</p><h3 id="故障"><a href="#故障" class="headerlink" title="故障"></a>故障</h3><p>python2.7的pip install aiohttp会报错，使用Python3的pip：</p><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ sudo apt-get install python3-pip</span><br></pre></td></tr></table></figure><p>注意：python3.4无法安装aiohttp，但安装3.6后与.34共存会破坏pip3，使安装包时报错！</p><a id="more"></a>
@@ -172,8 +384,8 @@
       </categories>
       <tags>
         <tag>Hexo</tag>
-        <tag>Next</tag>
         <tag>Web</tag>
+        <tag>Next</tag>
       </tags>
   </entry>
   <entry>
