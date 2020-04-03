@@ -414,8 +414,8 @@
       </categories>
       <tags>
         <tag>Hexo</tag>
-        <tag>Web</tag>
         <tag>Next</tag>
+        <tag>Web</tag>
       </tags>
   </entry>
   <entry>
@@ -485,7 +485,7 @@
   <entry>
     <title>Hexo一些功能的实现</title>
     <url>/2019/11/03/hexo-blog/</url>
-    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><p>主要是列举了解决这两个比较难搞的功能。</p>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><p>网易云音乐播放插件，Valine样式的修改。<br>主要是列举了解决这两个比较难搞的功能。</p>
 <h2 id="网易云音乐："><a href="#网易云音乐：" class="headerlink" title="网易云音乐："></a>网易云音乐：</h2><h3 id="安装："><a href="#安装：" class="headerlink" title="安装："></a>安装：</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">npm install aplayer --save</span><br></pre></td></tr></table></figure>
 
 <h3 id="实现播放列表"><a href="#实现播放列表" class="headerlink" title="实现播放列表"></a>实现播放列表</h3><p>将E:\hexo\node_modules\aplayer内的dist文件夹复制到E:\hexo\themes\next\source内<br>并在该文件夹内新建music.js</p>
@@ -523,7 +523,11 @@
   <entry>
     <title>搭建Github+Hexo的Blog</title>
     <url>/2019/11/03/my-first-blog/</url>
-    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><p>网上搜索就有一大堆的教程可以参考，一步一步实现即可。</p><h2 id="初步搭建教程："><a href="#初步搭建教程：" class="headerlink" title="初步搭建教程："></a>初步搭建教程：</h2><p><a href="http://blog.haoji.me/build-blog-website-by-hexo-github.html?from=xa" target="_blank" rel="noopener">http://blog.haoji.me/build-blog-website-by-hexo-github.html?from=xa</a></p>]]></content>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><p>搭建一个基于Github+Hexo的Blog</p>
+<a id="more"></a>
+<p>网上搜索就有一大堆的教程可以参考，一步一步实现即可。</p>
+<h2 id="初步搭建教程："><a href="#初步搭建教程：" class="headerlink" title="初步搭建教程："></a>初步搭建教程：</h2><p><a href="http://blog.haoji.me/build-blog-website-by-hexo-github.html?from=xa" target="_blank" rel="noopener">http://blog.haoji.me/build-blog-website-by-hexo-github.html?from=xa</a></p>
+]]></content>
       <categories>
         <category>博客</category>
       </categories>
