@@ -65,7 +65,7 @@
 <meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;04&#x2F;01&#x2F;Docker-Uwsgi-Nginx%E9%83%A8%E7%BD%B2Django%E9%A1%B9%E7%9B%AE&#x2F;4.png">
 <meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;04&#x2F;01&#x2F;Docker-Uwsgi-Nginx%E9%83%A8%E7%BD%B2Django%E9%A1%B9%E7%9B%AE&#x2F;5.png">
 <meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;04&#x2F;01&#x2F;Docker-Uwsgi-Nginx%E9%83%A8%E7%BD%B2Django%E9%A1%B9%E7%9B%AE&#x2F;6.png">
-<meta property="og:updated_time" content="2020-04-01T14:19:13.051Z">
+<meta property="og:updated_time" content="2020-04-03T08:32:46.075Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;04&#x2F;01&#x2F;Docker-Uwsgi-Nginx%E9%83%A8%E7%BD%B2Django%E9%A1%B9%E7%9B%AE&#x2F;1.png">
 
@@ -261,10 +261,16 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2020-04-01 15:13:01 / 修改时间：22:19:13" itemprop="dateCreated datePublished" datetime="2020-04-01T15:13:01+08:00">2020-04-01</time>
+              <time title="创建时间：2020-04-01 15:13:01" itemprop="dateCreated datePublished" datetime="2020-04-01T15:13:01+08:00">2020-04-01</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-04-03 16:32:46" itemprop="dateModified" datetime="2020-04-03T16:32:46+08:00">2020-04-03</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="fa fa-folder-o"></i>
@@ -470,9 +476,9 @@
 <p>注意：<br>当使用python3 manage.py createsuperuser等出现报错：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">ERRORS:</span><br><span class="line">?: (staticfiles.E002) The STATICFILES_DIRS setting should not contain the STATIC_ROOT setting.</span><br><span class="line"></span><br><span class="line">将settings.py修改：</span><br><span class="line">STATIC_ROOT = os.path.join(BASE_DIR, <span class="string">"/static/"</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">python3 manage.py createsuperuser</span><br><span class="line"></span><br><span class="line">出现reload不存在问题：</span><br><span class="line"><span class="built_in">cd</span> /usr/<span class="built_in">local</span>/lib/python3.6/site-packages/</span><br><span class="line">vim sitecustomize_back.py</span><br><span class="line">内容为：</span><br><span class="line"><span class="comment">#coding=utf8</span></span><br><span class="line">             import sys</span><br><span class="line">             reload(sys)</span><br><span class="line">             sys.setdefaultencoding(<span class="string">'utf8'</span>)</span><br><span class="line"></span><br><span class="line">出现报错：</span><br><span class="line">UnicodeEncodeError: <span class="string">'ascii'</span> codec can<span class="string">'t encode characters in position 0-2: ordinal not in range(128)</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">执行：</span></span><br><span class="line"><span class="string">export PYTHONIOENCODING=utf-8</span></span><br></pre></td></tr></table></figure>
 
-<h2 id="设置外网访问服务器数据库："><a href="#设置外网访问服务器数据库：" class="headerlink" title="设置外网访问服务器数据库："></a>设置外网访问服务器数据库：</h2><h3 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">GRANT ALL PRIVILEGES ON *.* TO <span class="string">'root'</span>@<span class="string">'%'</span> IDENTIFIED BY <span class="string">'GR2516361'</span> WITH GRANT OPTION;</span><br><span class="line"></span><br><span class="line">flush privileges;</span><br></pre></td></tr></table></figure>
+<h2 id="设置外网访问服务器数据库："><a href="#设置外网访问服务器数据库：" class="headerlink" title="设置外网访问服务器数据库："></a>设置外网访问服务器数据库：</h2><h3 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">GRANT ALL PRIVILEGES ON *.* TO <span class="string">'root'</span>@<span class="string">'%'</span> IDENTIFIED BY <span class="string">'外网访问密码'</span> WITH GRANT OPTION;</span><br><span class="line"></span><br><span class="line">flush privileges;</span><br></pre></td></tr></table></figure>
 
-<h3 id="Navicat无法连接"><a href="#Navicat无法连接" class="headerlink" title="Navicat无法连接"></a>Navicat无法连接</h3><p>解决:<br>    上面修改了访问限权，容器之间的访问会受影响，需要到项目settings.py<br>    修改数据库连接配置，将连接密码由原来的root1234改为外部连接的密码</p>
+<h3 id="Navicat无法连接"><a href="#Navicat无法连接" class="headerlink" title="Navicat无法连接"></a>Navicat无法连接</h3><p>解决:<br>    上面修改了访问限权，容器之间的访问会受影响，需要到项目settings.py<br>    修改数据库连接配置，将连接密码由原来的root1234改为外网连接的密码</p>
 <p>nginx：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">netstat -ntlp 查看进程状态</span><br><span class="line"><span class="built_in">kill</span> nginx的进程</span><br><span class="line"></span><br><span class="line">重新启动:</span><br><span class="line">/usr/sbin/nginx -s reload</span><br></pre></td></tr></table></figure>
 
